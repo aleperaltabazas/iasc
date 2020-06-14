@@ -12,12 +12,17 @@ case class Auction(
   def close(date: LocalDateTime): Auction = copy(status = status.close(date, bids, basePrice))
 
   def cancel(date: LocalDateTime): Auction = copy(status = status.cancel(date))
+
+  def addBid(bid: Bid): Auction = if (status.canBid) copy(bids = bid :: bids) else
+    throw new IllegalStateException("Can't bid on a closed or cancelled auction.")
 }
 
 sealed abstract class AuctionStatus(val status: String) {
   def close(date: LocalDateTime, bids: List[Bid], basePrice: Int): AuctionStatus
 
   def cancel(date: LocalDateTime): AuctionStatus
+
+  def canBid: Boolean
 }
 
 case class Open(expirationDate: LocalDateTime) extends AuctionStatus("OPEN") {
@@ -33,6 +38,8 @@ case class Open(expirationDate: LocalDateTime) extends AuctionStatus("OPEN") {
   }
 
   override def cancel(date: LocalDateTime): AuctionStatus = Cancelled(date)
+
+  override def canBid: Boolean = true
 }
 
 case class Cancelled(cancelledOn: LocalDateTime) extends AuctionStatus("CANCELLED") {
@@ -42,6 +49,8 @@ case class Cancelled(cancelledOn: LocalDateTime) extends AuctionStatus("CANCELLE
   override def cancel(date: LocalDateTime): AuctionStatus = throw new IllegalStateException(
     "Can't cancel a cancelled auction."
   )
+
+  override def canBid: Boolean = false
 }
 
 sealed trait Closed extends AuctionStatus {
@@ -51,6 +60,8 @@ sealed trait Closed extends AuctionStatus {
   override def cancel(date: LocalDateTime): AuctionStatus = throw new IllegalStateException(
     "Can't close a closed auction."
   )
+
+  override def canBid: Boolean = false
 }
 
 case class ClosedWithWinner(
