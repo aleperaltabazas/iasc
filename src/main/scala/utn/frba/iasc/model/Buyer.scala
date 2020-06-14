@@ -7,4 +7,4 @@ case class Buyer(
   interestTags: List[String]
 ) extends Entity
 
-case class Bid(offer: Int, buyer: Buyer)
+case class Bid(id: String, offer: Int, buyer: Buyer)
