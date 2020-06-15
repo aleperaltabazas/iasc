@@ -9,7 +9,7 @@ import utn.frba.iasc.service.{AuctionService, BidService}
 class AuctionController(
   private val auctionService: AuctionService,
   private val bidService: BidService,
-  private val objectMapper: ObjectMapper
+  private val mapper: ObjectMapper
 ) extends Controller {
 
   def register(): Unit = {
@@ -18,13 +18,13 @@ class AuctionController(
   }
 
   def bid(req: Request, res: Response): PlacedBidDTO = {
-    val bidDTO = objectMapper.readValue(req.body(), new TypeReference[BidDTO] {})
+    val bidDTO = mapper.readValue(req.body(), new TypeReference[BidDTO] {})
     val auctionId = req.params(":auction")
     PlacedBidDTO(bidService.register(bidDTO, auctionId))
   }
 
   def createAuction(req: Request, res: Response): CreatedAuctionDTO = {
-    val auctionDTO: AuctionDTO = objectMapper.readValue(req.body(), new TypeReference[AuctionDTO] {})
+    val auctionDTO: AuctionDTO = mapper.readValue(req.body(), new TypeReference[AuctionDTO] {})
     CreatedAuctionDTO(auctionService.register(auctionDTO))
   }
 }
