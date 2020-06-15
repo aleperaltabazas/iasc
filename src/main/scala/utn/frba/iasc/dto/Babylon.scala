@@ -14,6 +14,7 @@ case class AuctionDTO(
 )
 
 case class BidDTO(
-  username: String,
+  buyerId: String,
+  auctionId: String,
   offer: Int
 )

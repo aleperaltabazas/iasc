@@ -15,4 +15,5 @@ libraryDependencies ++= Seq(
   "com.fasterxml.jackson.datatype" % "jackson-datatype-jdk8" % jacksonVersion,
   "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310" % jacksonVersion,
   "com.fasterxml.jackson.module" % "jackson-module-scala_2.11" % jacksonVersion,
+  "com.typesafe.akka" %% "akka-actor" % "2.6.6"
 )

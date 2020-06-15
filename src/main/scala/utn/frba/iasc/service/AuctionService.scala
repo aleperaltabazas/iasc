@@ -20,5 +20,6 @@ class AuctionService(
     )
 
     auctionRepository.register(auction)
+    // schedule expiration
   }
 }

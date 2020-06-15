@@ -20,4 +20,8 @@ abstract class Repository[T <: Entity](
   def all: List[T] = all(_ => true)
 
   def all(f: T => Boolean): List[T] = elements.filter(f)
+
+  def update(t: T): Unit = {
+    elements = t :: elements.filterNot(_.id == t.id)
+  }
 }
