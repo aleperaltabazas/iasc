@@ -15,6 +15,9 @@ case class AuctionDTO(
 
 case class BidDTO(
   buyerId: String,
-  auctionId: String,
   offer: Int
 )
+
+case class CreatedAuctionDTO(auctionId: String)
+
+case class PlacedBidDTO(bidId: String)

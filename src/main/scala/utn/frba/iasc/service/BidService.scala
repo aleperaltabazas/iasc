@@ -11,16 +11,17 @@ class BidService(
   private val auctionRepository: AuctionRepository,
   private val idGen: IdGen
 ) {
-  def register(bidDTO: BidDTO): Unit = {
+  def register(bidDTO: BidDTO, auctionId: String): String = {
+    val id = idGen.bid
     val bid = Bid(
-      id = idGen.bid,
+      id = id,
       bidDTO.offer,
       buyer = userRepository.find(bidDTO.buyerId).getOrElse {
         throw new NoSuchElementException(s"No buyer found with ID ${bidDTO.buyerId}")
       }
     )
 
-    val auction = auctionRepository.find(bidDTO.auctionId)
+    val auction = auctionRepository.find(auctionId)
       .map(_.addBid(bid))
       .getOrElse {
         throw new NoSuchElementException(s"No auction found with ID ${bidDTO.buyerId}")
@@ -28,5 +29,6 @@ class BidService(
 
     bidRepository.register(bid)
     auctionRepository.update(auction)
+    id
   }
 }

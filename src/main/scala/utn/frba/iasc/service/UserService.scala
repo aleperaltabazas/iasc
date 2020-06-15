@@ -9,12 +9,16 @@ class UserService(
   private val userRepository: UserRepository,
   private val idGen: IdGen
 ) {
-  def register(buyer: BuyerDTO): Unit = userRepository.register {
-    Buyer(
-      id = idGen.user,
-      username = buyer.username,
-      ip = buyer.ip,
-      interestTags = buyer.interestTags
-    )
+  def register(buyer: BuyerDTO): String = {
+    val id = idGen.user
+    userRepository.register {
+      Buyer(
+        id = id,
+        username = buyer.username,
+        ip = buyer.ip,
+        interestTags = buyer.interestTags
+      )
+    }
+    id
   }
 }

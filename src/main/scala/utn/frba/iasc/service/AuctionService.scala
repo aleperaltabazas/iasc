@@ -10,10 +10,11 @@ class AuctionService(
   private val idGen: IdGen,
   private val clock: Clock
 ) {
-  def register(auctionDTO: AuctionDTO): Unit = {
+  def register(auctionDTO: AuctionDTO): String = {
     val expirationDate = clock.now.plusSeconds(auctionDTO.maxDuration)
+    val id = idGen.auction
     val auction = Auction(
-      id = idGen.auction,
+      id = id,
       article = auctionDTO.article,
       status = Open(expirationDate = expirationDate),
       basePrice = auctionDTO.basePrice
@@ -21,5 +22,6 @@ class AuctionService(
 
     auctionRepository.register(auction)
     // schedule expiration
+    id
   }
 }
