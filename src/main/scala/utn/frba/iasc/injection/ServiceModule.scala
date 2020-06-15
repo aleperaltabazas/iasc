@@ -1,12 +1,12 @@
 package utn.frba.iasc.injection
 
 import com.google.inject.name.Named
-import com.google.inject.{Provides, Singleton}
+import com.google.inject.{AbstractModule, Provides, Singleton}
 import utn.frba.iasc.db.{AuctionRepository, BidRepository, UserRepository}
 import utn.frba.iasc.service.{AuctionService, BidService, UserService}
 import utn.frba.iasc.utils.{Clock, IdGen}
 
-object ServiceModule {
+object ServiceModule extends AbstractModule {
   @Provides
   @Singleton
   @Named("auctionService")

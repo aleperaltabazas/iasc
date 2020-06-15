@@ -4,10 +4,10 @@ package utn.frba.iasc.injection
 import java.text.SimpleDateFormat
 
 import com.google.inject.name.Named
-import com.google.inject.{Provides, Singleton}
+import com.google.inject.{AbstractModule, Provides, Singleton}
 import utn.frba.iasc.utils.{Clock, IdGen}
 
-object UtilsModule {
+object UtilsModule extends AbstractModule {
   @Provides
   @Singleton
   @Named("clock")

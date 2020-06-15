@@ -2,11 +2,11 @@ package utn.frba.iasc.injection
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.inject.name.Named
-import com.google.inject.{Provides, Singleton}
+import com.google.inject.{AbstractModule, Provides, Singleton}
 import utn.frba.iasc.controller.{AuctionController, BuyersController}
 import utn.frba.iasc.service.{AuctionService, BidService, UserService}
 
-object ControllerModule {
+object ControllerModule extends AbstractModule {
   @Provides
   @Singleton
   @Named("auctionController")
