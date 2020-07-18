@@ -9,7 +9,7 @@ case class BuyerDTO(
 case class AuctionDTO(
   tags: List[String],
   basePrice: Int = 0,
-  maxDuration: Int, //in seconds
+  maxDuration: Int,
   article: String
 )
 

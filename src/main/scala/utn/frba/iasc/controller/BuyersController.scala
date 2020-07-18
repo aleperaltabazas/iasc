@@ -1,24 +1,26 @@
 package utn.frba.iasc.controller
 
-import com.fasterxml.jackson.core.`type`.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
-import spark.{Request, Response, Spark}
-import utn.frba.iasc.dto.BuyerDTO
+import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.Route
+import org.slf4j.{Logger, LoggerFactory}
 import utn.frba.iasc.service.UserService
 
 class BuyersController(
   private val userService: UserService,
-  private val mapper: ObjectMapper
 ) extends Controller {
-  private val emptyBody: String = ""
+  private val LOGGER: Logger = LoggerFactory.getLogger(classOf[BuyersController])
 
-  override def register(): Unit = {
-    Spark.post("/buyers", (req: Request, res: Response) => createBuyer(req, res))
-  }
+  override def routes: Route = concat(
+    (path("buyers") & post) {
+      LOGGER.info("New buyer")
+      complete((StatusCodes.OK, ""))
+    }
+  )
 
-  def createBuyer(req: Request, res: Response): String = {
-    val buyerDTO: BuyerDTO = mapper.readValue(req.body(), new TypeReference[BuyerDTO] {})
-    userService.register(buyerDTO)
-    emptyBody
-  }
+  //  def createBuyer(req: Request, res: Response): String = {
+  //    //    val auctionDTO = decode[BuyerDTO](req.body()).getOrThrow
+  //    //    userService.register(buyerDTO)
+  //    emptyBody
+  //  }
 }
