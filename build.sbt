@@ -7,9 +7,14 @@ scalaVersion := "2.13.2"
 val guiceVersion = "4.2.2"
 val vSlf4J = "1.7.30"
 val vLogback = "1.2.1"
+val circeVersion = "0.12.3"
 
 libraryDependencies ++= Seq(
   "com.google.inject" % "guice" % guiceVersion,
+
+  "io.circe" %% "circe-core" % circeVersion,
+  "io.circe" %% "circe-generic" % circeVersion,
+  "io.circe" %% "circe-parser" % circeVersion,
 
   "com.typesafe.akka" %% "akka-http" % "10.1.12",
   "com.typesafe.akka" %% "akka-stream" % "2.5.26",

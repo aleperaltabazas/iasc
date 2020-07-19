@@ -10,6 +10,7 @@ class AuctionService(
   private val idGen: IdGen,
   private val clock: Clock
 ) {
+
   def register(auctionDTO: AuctionDTO): String = {
     val expirationDate = clock.now.plusSeconds(auctionDTO.maxDuration)
     val id = idGen.auction

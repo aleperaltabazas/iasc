@@ -4,9 +4,10 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
-import com.google.inject.Guice
+import com.google.inject.name.Names
+import com.google.inject.{Guice, Key}
 import utn.frba.iasc.controller.Controller
-import utn.frba.iasc.injection.{ControllerModule, RepositoryModule, ServiceModule, UtilsModule}
+import utn.frba.iasc.injection._
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.io.StdIn
@@ -14,16 +15,19 @@ import scala.jdk.CollectionConverters._
 
 object Babylon {
   def main(args: Array[String]) {
-    implicit val system: ActorSystem = ActorSystem()
-    implicit val materializer: ActorMaterializer = ActorMaterializer()
-    implicit val executionContext: ExecutionContextExecutor = system.dispatcher
-
     val injector = Guice.createInjector(
+      ActorsModule,
       ControllerModule,
       RepositoryModule,
       ServiceModule,
-      UtilsModule
+      UtilsModule,
     )
+
+    implicit val system: ActorSystem = injector
+      .getInstance(Key.get(classOf[ActorSystem], Names.named("actorSystem")))
+    implicit val materializer: ActorMaterializer = injector
+      .getInstance(Key.get(classOf[ActorMaterializer], Names.named("materializer")))
+    implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
     val routes = injector.getAllBindings.asScala.keys
       .filter { it => classOf[Controller].isAssignableFrom(it.getTypeLiteral.getRawType) }
