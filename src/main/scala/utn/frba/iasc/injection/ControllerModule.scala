@@ -4,6 +4,7 @@ import com.google.inject.name.Named
 import com.google.inject.{AbstractModule, Provides, Singleton}
 import utn.frba.iasc.controller.{AuctionController, BuyersController}
 import utn.frba.iasc.service.{AuctionService, BidService, UserService}
+import utn.frba.iasc.utils.IdGen
 
 object ControllerModule extends AbstractModule {
   @Provides
@@ -12,9 +13,11 @@ object ControllerModule extends AbstractModule {
   def auctionController(
     @Named("auctionService") auctionService: AuctionService,
     @Named("bidService") bidService: BidService,
+    @Named("idGen") idGen: IdGen
   ): AuctionController = new AuctionController(
     auctionService = auctionService,
     bidService = bidService,
+    idGen = idGen
   )
 
   @Provides
@@ -22,7 +25,9 @@ object ControllerModule extends AbstractModule {
   @Named("userController")
   def buyersController(
     @Named("userService") userService: UserService,
+    @Named("idGen") idGen: IdGen
   ): BuyersController = new BuyersController(
     userService = userService,
+    idGen = idGen
   )
 }

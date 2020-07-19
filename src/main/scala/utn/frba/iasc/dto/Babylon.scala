@@ -18,6 +18,8 @@ case class BidDTO(
   offer: Int
 )
 
+case class UserCreatedDTO(userId: String)
+
 case class CreatedAuctionDTO(auctionId: String)
 
 case class PlacedBidDTO(bidId: String)

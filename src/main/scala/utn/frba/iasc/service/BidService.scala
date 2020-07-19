@@ -3,18 +3,15 @@ package utn.frba.iasc.service
 import utn.frba.iasc.db.{AuctionRepository, BidRepository, UserRepository}
 import utn.frba.iasc.dto.BidDTO
 import utn.frba.iasc.model.Bid
-import utn.frba.iasc.utils.IdGen
 
 class BidService(
   private val bidRepository: BidRepository,
   private val userRepository: UserRepository,
-  private val auctionRepository: AuctionRepository,
-  private val idGen: IdGen
+  private val auctionRepository: AuctionRepository
 ) {
-  def register(bidDTO: BidDTO, auctionId: String): String = {
-    val id = idGen.bid
+  def register(bidDTO: BidDTO, auctionId: String, bidId: String) {
     val bid = Bid(
-      id = id,
+      id = bidId,
       bidDTO.offer,
       buyer = userRepository.find(bidDTO.buyerId).getOrElse {
         throw new NoSuchElementException(s"No buyer found with ID ${bidDTO.buyerId}")
@@ -29,6 +26,5 @@ class BidService(
 
     bidRepository.register(bid)
     auctionRepository.update(auction)
-    id
   }
 }

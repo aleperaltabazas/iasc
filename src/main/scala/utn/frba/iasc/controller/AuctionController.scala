@@ -3,35 +3,35 @@ package utn.frba.iasc.controller
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives.{complete, concat, path, post, _}
 import akka.http.scaladsl.server.Route
+import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import org.slf4j.{Logger, LoggerFactory}
-import utn.frba.iasc.dto.{AuctionCodec, AuctionDTO, BidCodec, BidDTO}
-import utn.frba.iasc.extensions.{CirceExtensionSyntax, Kotlin}
+import utn.frba.iasc.dto._
+import utn.frba.iasc.extensions.Kotlin
 import utn.frba.iasc.service.{AuctionService, BidService}
-import io.circe.parser._
+import utn.frba.iasc.utils.IdGen
 
 class AuctionController(
   private val auctionService: AuctionService,
   private val bidService: BidService,
-) extends Controller
-  with Kotlin
-  with CirceExtensionSyntax
-  with AuctionCodec
-  with BidCodec {
+  private val idGen: IdGen
+) extends Controller with Kotlin with AuctionCodec with CreatedAuctionCodec with BidCodec with BidPlacedCodec {
   private val LOGGER: Logger = LoggerFactory.getLogger(classOf[AuctionController])
 
   override def routes: Route = concat(
-    (path("auctions" / Segment / "bids") & post) { id: String =>
-      entity(as[String]) { body: String =>
-        val bid = decode[BidDTO](body)
-        LOGGER.info(s"Create new bid on auction $id")
-        complete((StatusCodes.OK, ""))
+    (path("auctions" / Segment / "bids") & post) { auctionId: String =>
+      entity(as[BidDTO]) { bid: BidDTO =>
+        LOGGER.info(s"Create new bid on auction $auctionId")
+        val bidId = idGen.bid
+        bidService.register(bid, auctionId, bidId)
+        complete(StatusCodes.OK, PlacedBidDTO(bidId))
       }
     },
     (path("auctions") & post) {
-      entity(as[String]) { body: String =>
-        val auction = decodeOrThrow[AuctionDTO](body)
+      entity(as[AuctionDTO]) { auction: AuctionDTO =>
         LOGGER.info("Create new auction")
-        complete((StatusCodes.OK, ""))
+        val id = idGen.auction
+        auctionService.register(auction, id)
+        complete(StatusCodes.OK, CreatedAuctionDTO(id))
       }
     },
   )

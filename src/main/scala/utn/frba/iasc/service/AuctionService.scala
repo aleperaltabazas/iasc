@@ -3,17 +3,15 @@ package utn.frba.iasc.service
 import utn.frba.iasc.db.AuctionRepository
 import utn.frba.iasc.dto.AuctionDTO
 import utn.frba.iasc.model.{Auction, Open}
-import utn.frba.iasc.utils.{Clock, IdGen}
+import utn.frba.iasc.utils.Clock
 
 class AuctionService(
   private val auctionRepository: AuctionRepository,
-  private val idGen: IdGen,
   private val clock: Clock
 ) {
 
-  def register(auctionDTO: AuctionDTO): String = {
+  def register(auctionDTO: AuctionDTO, id: String) {
     val expirationDate = clock.now.plusSeconds(auctionDTO.maxDuration)
-    val id = idGen.auction
     val auction = Auction(
       id = id,
       article = auctionDTO.article,
@@ -23,6 +21,5 @@ class AuctionService(
 
     auctionRepository.register(auction)
     // schedule expiration
-    id
   }
 }

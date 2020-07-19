@@ -27,3 +27,8 @@ trait BidPlacedCodec {
   implicit val bidPlacedEncoder: Encoder[PlacedBidDTO] = deriveEncoder[PlacedBidDTO]
   implicit val bidPlacedDecoder: Decoder[PlacedBidDTO] = deriveDecoder[PlacedBidDTO]
 }
+
+trait UserCodec {
+  implicit val userCreatedEncoder: Encoder[UserCreatedDTO] = deriveEncoder[UserCreatedDTO]
+  implicit val userCreatedDecoder: Decoder[UserCreatedDTO] = deriveDecoder[UserCreatedDTO]
+}
