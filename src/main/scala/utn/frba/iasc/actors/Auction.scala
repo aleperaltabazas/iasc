@@ -1,8 +1,7 @@
 package utn.frba.iasc.actors
 
-import utn.frba.iasc.dto.AuctionDTO
+import utn.frba.iasc.model.Auction
 
-sealed trait AuctionMessage
-
-case class CreateAuction(auctionDTO: AuctionDTO) extends AuctionMessage
-case object PlaceBid extends AuctionMessage
+case class CreateAuction(auction: Auction, timeout: Int)
+case class CloseAuction(auction: Auction)
+case object PlaceBid

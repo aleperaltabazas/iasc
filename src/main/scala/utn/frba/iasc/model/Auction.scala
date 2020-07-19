@@ -9,9 +9,9 @@ case class Auction(
   basePrice: Int,
   bids: List[Bid] = List()
 ) extends Entity {
-  def close(date: LocalDateTime): Auction = copy(status = status.close(date, bids, basePrice))
+  def closed(date: LocalDateTime = LocalDateTime.now()): Auction = copy(status = status.close(date, bids, basePrice))
 
-  def cancel(date: LocalDateTime): Auction = copy(status = status.cancel(date))
+  def cancelled(date: LocalDateTime): Auction = copy(status = status.cancel(date))
 
   def addBid(bid: Bid): Auction = if (status.canBid) copy(bids = bid :: bids) else
     throw new IllegalStateException("Can't bid on a closed or cancelled auction.")
@@ -25,15 +25,15 @@ sealed abstract class AuctionStatus(val status: String) {
   def canBid: Boolean
 }
 
-case class Open(expirationDate: LocalDateTime) extends AuctionStatus("OPEN") {
+case object Open extends AuctionStatus("OPEN") {
   override def close(date: LocalDateTime, bids: List[Bid], basePrice: Int): AuctionStatus = {
     bids.filter(_.offer >= basePrice).maxByOption(_.offer) match {
       case Some(winner) => ClosedWithWinner(
-        expirationDate,
+        date,
         finalPrice = winner.offer,
         winner = winner.buyer
       )
-      case None => ClosedUnresolved(expirationDate)
+      case None => ClosedUnresolved(date)
     }
   }
 

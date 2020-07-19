@@ -1,5 +1,6 @@
 package utn.frba.iasc.injection
 
+import akka.actor.ActorRef
 import com.google.inject.name.Named
 import com.google.inject.{AbstractModule, Provides, Singleton}
 import utn.frba.iasc.db.{AuctionRepository, BidRepository, UserRepository}
@@ -11,11 +12,9 @@ object ServiceModule extends AbstractModule {
   @Singleton
   @Named("auctionService")
   def auctionService(
-    @Named("auctionRepository") auctionRepository: AuctionRepository,
-    @Named("clock") clock: Clock
+    @Named("auctionActorRef") auctionActor: ActorRef
   ): AuctionService = new AuctionService(
-    auctionRepository = auctionRepository,
-    clock = clock
+    auctionActor = auctionActor
   )
 
   @Provides

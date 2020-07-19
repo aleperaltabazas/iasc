@@ -8,7 +8,7 @@ class UserService(
   private val userRepository: UserRepository,
 ) {
   def register(buyer: BuyerDTO, buyerId: String) {
-    userRepository.register {
+    userRepository.add {
       Buyer(
         id = buyerId,
         username = buyer.username,

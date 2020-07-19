@@ -7,7 +7,7 @@ abstract class Repository[T <: Entity](
 ) {
   def find(id: String): Option[T] = elements.find(_.id == id)
 
-  def register(e: T): Unit = {
+  def add(e: T): Unit = {
     elements = e :: elements
   }
 

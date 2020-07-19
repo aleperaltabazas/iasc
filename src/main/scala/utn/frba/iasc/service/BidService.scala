@@ -24,7 +24,7 @@ class BidService(
         throw new NoSuchElementException(s"No auction found with ID ${bidDTO.buyerId}")
       }
 
-    bidRepository.register(bid)
+    bidRepository.add(bid)
     auctionRepository.update(auction)
   }
 }
