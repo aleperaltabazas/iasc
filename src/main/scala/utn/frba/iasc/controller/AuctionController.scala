@@ -18,6 +18,9 @@ class AuctionController(
   private val LOGGER: Logger = LoggerFactory.getLogger(classOf[AuctionController])
 
   override def routes: Route = concat(
+    (path("auctions" / Segment) & get) { auctionId: String =>
+      ???
+    },
     (path("auctions" / Segment / "bids") & post) { auctionId: String =>
       entity(as[BidDTO]) { bid: BidDTO =>
         LOGGER.info(s"Create new bid on auction $auctionId")

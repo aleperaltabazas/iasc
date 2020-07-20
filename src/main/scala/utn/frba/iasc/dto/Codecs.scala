@@ -1,7 +1,9 @@
 package utn.frba.iasc.dto
 
 import io.circe.Encoder
-import io.circe._, io.circe.generic.semiauto._
+import io.circe._
+import io.circe.generic.semiauto._
+import utn.frba.iasc.model.{Auction, Bid}
 
 trait BuyerCodec {
   implicit val buyerEncoder: Encoder[BuyerDTO] = deriveEncoder[BuyerDTO]
@@ -31,4 +33,11 @@ trait BidPlacedCodec {
 trait UserCodec {
   implicit val userCreatedEncoder: Encoder[UserCreatedDTO] = deriveEncoder[UserCreatedDTO]
   implicit val userCreatedDecoder: Decoder[UserCreatedDTO] = deriveDecoder[UserCreatedDTO]
+}
+
+trait AuctionFindCodec {
+  implicit val auctionFindEncoder: Encoder[Auction] = deriveEncoder[Auction]
+  implicit val auctionFindDecoder: Decoder[Auction] = deriveDecoder[Auction]
+  implicit val bidEncoder: Encoder[Bid] = deriveEncoder[Bid]
+  implicit val bidDecoder: Decoder[Bid] = deriveDecoder[Bid]
 }
