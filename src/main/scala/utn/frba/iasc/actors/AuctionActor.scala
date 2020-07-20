@@ -38,7 +38,6 @@ class AuctionActor(
       }
 
       auctionRepository.update(closedAuction)
-      jobsRepository
     case PlaceBid(bid, auctionId) =>
       val auction = auctionRepository.find(auctionId).getOrElse {
         throw new NoSuchElementException(s"No auction found with ID $auctionId")
@@ -50,5 +49,15 @@ class AuctionActor(
 
       bidRepository.add(bid)
       auctionRepository.update(auction.addBid(bid))
+    case CancelAuction(id) =>
+      val auction = auctionRepository.find(id).getOrElse {
+        throw new NoSuchElementException(s"No action found with ID $id")
+      }
+
+      val cancelledAuction = auction.cancelled()
+
+      LOGGER.info(s"Cancelling auction $id")
+      auctionRepository.update(cancelledAuction)
+      jobsRepository.cancel(id)
   }
 }

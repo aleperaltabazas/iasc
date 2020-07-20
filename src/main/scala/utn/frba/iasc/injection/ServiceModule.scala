@@ -20,7 +20,7 @@ object ServiceModule extends AbstractModule {
   @Singleton
   @Named("userService")
   def userService(
-    @Named("usersActor") usersActor: ActorRef
+    @Named("usersActorRef") usersActor: ActorRef
   ): UserService = new UserService(
     usersActor = usersActor
   )

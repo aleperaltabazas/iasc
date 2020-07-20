@@ -13,7 +13,7 @@ case class Auction(
 
   def closed(date: LocalDateTime = LocalDateTime.now()): Auction = copy(status = status.close(date, bids, basePrice))
 
-  def cancelled(date: LocalDateTime): Auction = copy(status = status.cancel(date))
+  def cancelled(date: LocalDateTime = LocalDateTime.now()): Auction = copy(status = status.cancel(date))
 
   def addBid(bid: Bid): Auction = if (status.canBid) copy(bids = bid :: bids) else
     throw new IllegalStateException("Can't bid on a closed or cancelled auction.")

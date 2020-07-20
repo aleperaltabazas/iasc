@@ -34,5 +34,10 @@ class AuctionController(
         complete(StatusCodes.Accepted, CreatedAuctionDTO(id))
       }
     },
+    (path("auctions" / Segment) & delete) { auctionId: String =>
+      LOGGER.info(s"Cancel bid $auctionId")
+      auctionService.cancel(auctionId)
+      complete(StatusCodes.OK)
+    }
   )
 }

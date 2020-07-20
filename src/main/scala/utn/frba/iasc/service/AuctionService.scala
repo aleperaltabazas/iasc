@@ -1,7 +1,7 @@
 package utn.frba.iasc.service
 
 import akka.actor.ActorRef
-import utn.frba.iasc.actors.CreateAuction
+import utn.frba.iasc.actors.{CancelAuction, CreateAuction}
 import utn.frba.iasc.dto.AuctionDTO
 import utn.frba.iasc.model.{Auction, Open}
 
@@ -19,4 +19,9 @@ class AuctionService(
 
     auctionActor ! CreateAuction(auction, auctionDTO.maxDuration)
   }
+
+  def cancel(id: String): Unit = {
+    auctionActor ! CancelAuction(id)
+  }
+
 }
