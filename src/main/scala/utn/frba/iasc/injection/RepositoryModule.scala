@@ -2,7 +2,7 @@ package utn.frba.iasc.injection
 
 import com.google.inject.name.Named
 import com.google.inject.{AbstractModule, Provides, Singleton}
-import utn.frba.iasc.db.{AuctionRepository, BidRepository, UserRepository}
+import utn.frba.iasc.db.{AuctionRepository, BidRepository, JobsRepository, UserRepository}
 
 object RepositoryModule extends AbstractModule {
   @Provides
@@ -20,4 +20,8 @@ object RepositoryModule extends AbstractModule {
   @Named("bidRepository")
   def bidRepository: BidRepository = new BidRepository()
 
+  @Provides
+  @Singleton
+  @Named("jobsRepository")
+  def jobsRepository: JobsRepository = new JobsRepository()
 }

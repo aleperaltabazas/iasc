@@ -2,7 +2,7 @@ package utn.frba.iasc.actors
 
 import akka.actor.{Actor, ActorLogging, ActorSystem}
 import org.slf4j.{Logger, LoggerFactory}
-import utn.frba.iasc.db.{AuctionRepository, BidRepository}
+import utn.frba.iasc.db.{AuctionRepository, BidRepository, JobsRepository}
 import utn.frba.iasc.model.{ClosedUnresolved, ClosedWithWinner}
 
 import scala.concurrent.duration._
@@ -11,6 +11,7 @@ import scala.language.postfixOps
 class AuctionActor(
   private val auctionRepository: AuctionRepository,
   private val bidRepository: BidRepository,
+  private val jobsRepository: JobsRepository,
   private val system: ActorSystem
 ) extends Actor with ActorLogging {
   private val LOGGER: Logger = LoggerFactory.getLogger(classOf[AuctionActor])
@@ -22,6 +23,7 @@ class AuctionActor(
       val cancelRef = system.scheduler.scheduleOnce(timeout seconds, self, CloseAuction(auction.id))
       LOGGER.info(s"Scheduled auction ${auction.id} to expire in $timeout seconds")
       auctionRepository.add(auction)
+      jobsRepository.add(auction.id, cancelRef)
     case CloseAuction(auctionId) =>
       val auction = auctionRepository.find(auctionId).getOrElse {
         throw new NoSuchElementException("No auction found wth ID $auctionId")
@@ -36,6 +38,7 @@ class AuctionActor(
       }
 
       auctionRepository.update(closedAuction)
+      jobsRepository
     case PlaceBid(bid, auctionId) =>
       val auction = auctionRepository.find(auctionId).getOrElse {
         throw new NoSuchElementException(s"No auction found with ID $auctionId")

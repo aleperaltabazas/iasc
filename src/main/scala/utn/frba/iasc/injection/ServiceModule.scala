@@ -5,7 +5,6 @@ import com.google.inject.name.Named
 import com.google.inject.{AbstractModule, Provides, Singleton}
 import utn.frba.iasc.db.{AuctionRepository, BidRepository, UserRepository}
 import utn.frba.iasc.service.{AuctionService, BidService, UserService}
-import utn.frba.iasc.utils.Clock
 
 object ServiceModule extends AbstractModule {
   @Provides
@@ -21,10 +20,9 @@ object ServiceModule extends AbstractModule {
   @Singleton
   @Named("userService")
   def userService(
-    @Named("userRepository") userRepository: UserRepository,
-    @Named("clock") clock: Clock
+    @Named("usersActor") usersActor: ActorRef
   ): UserService = new UserService(
-    userRepository = userRepository
+    usersActor = usersActor
   )
 
   @Provides
