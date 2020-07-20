@@ -33,10 +33,12 @@ object ServiceModule extends AbstractModule {
   def bidService(
     @Named("bidRepository") bidRepository: BidRepository,
     @Named("userRepository") userRepository: UserRepository,
-    @Named("auctionRepository") auctionRepository: AuctionRepository
+    @Named("auctionRepository") auctionRepository: AuctionRepository,
+    @Named("auctionActorRef") auctionActorRef: ActorRef
   ): BidService = new BidService(
     bidRepository = bidRepository,
     userRepository = userRepository,
-    auctionRepository = auctionRepository
+    auctionRepository = auctionRepository,
+    auctionActor = auctionActorRef
   )
 }

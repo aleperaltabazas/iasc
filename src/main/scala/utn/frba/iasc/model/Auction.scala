@@ -9,6 +9,8 @@ case class Auction(
   basePrice: Int,
   bids: List[Bid] = List()
 ) extends Entity {
+  def isOpen: Boolean = status == Open
+
   def closed(date: LocalDateTime = LocalDateTime.now()): Auction = copy(status = status.close(date, bids, basePrice))
 
   def cancelled(date: LocalDateTime): Auction = copy(status = status.cancel(date))

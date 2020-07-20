@@ -1,5 +1,7 @@
 package utn.frba.iasc.service
 
+import akka.actor.ActorRef
+import utn.frba.iasc.actors.PlaceBid
 import utn.frba.iasc.db.{AuctionRepository, BidRepository, UserRepository}
 import utn.frba.iasc.dto.BidDTO
 import utn.frba.iasc.model.Bid
@@ -7,9 +9,10 @@ import utn.frba.iasc.model.Bid
 class BidService(
   private val bidRepository: BidRepository,
   private val userRepository: UserRepository,
-  private val auctionRepository: AuctionRepository
+  private val auctionRepository: AuctionRepository,
+  private val auctionActor: ActorRef
 ) {
-  def register(bidDTO: BidDTO, auctionId: String, bidId: String) {
+  def place(bidDTO: BidDTO, auctionId: String, bidId: String) {
     val bid = Bid(
       id = bidId,
       bidDTO.offer,
@@ -18,13 +21,6 @@ class BidService(
       }
     )
 
-    val auction = auctionRepository.find(auctionId)
-      .map(_.addBid(bid))
-      .getOrElse {
-        throw new NoSuchElementException(s"No auction found with ID ${bidDTO.buyerId}")
-      }
-
-    bidRepository.add(bid)
-    auctionRepository.update(auction)
+    auctionActor ! PlaceBid(bid, auctionId)
   }
 }

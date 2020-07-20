@@ -1,7 +1,7 @@
 package utn.frba.iasc.actors
 
-import utn.frba.iasc.model.Auction
+import utn.frba.iasc.model.{Auction, Bid}
 
 case class CreateAuction(auction: Auction, timeout: Int)
-case class CloseAuction(auction: Auction)
-case object PlaceBid
+case class CloseAuction(auctionId: String)
+case class PlaceBid(bid: Bid, auctionId: String)

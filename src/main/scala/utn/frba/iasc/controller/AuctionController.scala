@@ -22,8 +22,8 @@ class AuctionController(
       entity(as[BidDTO]) { bid: BidDTO =>
         LOGGER.info(s"Create new bid on auction $auctionId")
         val bidId = idGen.bid
-        bidService.register(bid, auctionId, bidId)
-        complete(StatusCodes.OK, PlacedBidDTO(bidId))
+        bidService.place(bid, auctionId, bidId)
+        complete(StatusCodes.Accepted, PlacedBidDTO(bidId))
       }
     },
     (path("auctions") & post) {
@@ -31,7 +31,7 @@ class AuctionController(
         LOGGER.info("Create new auction")
         val id = idGen.auction
         auctionService.register(auction, id)
-        complete(StatusCodes.OK, CreatedAuctionDTO(id))
+        complete(StatusCodes.Accepted, CreatedAuctionDTO(id))
       }
     },
   )
