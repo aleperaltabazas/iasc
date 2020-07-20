@@ -5,7 +5,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import org.slf4j.{Logger, LoggerFactory}
-import utn.frba.iasc.dto.{BuyerCodec, BuyerDTO, UserCodec, UserCreatedDTO}
+import utn.frba.iasc.dto.{BuyerCodec, BuyerDTO, UserCodec}
 import utn.frba.iasc.service.UserService
 import utn.frba.iasc.utils.IdGen
 
@@ -21,14 +21,8 @@ class BuyersController(
         LOGGER.info("New buyer")
         val buyerId = idGen.user
         userService.register(buyer, buyerId)
-        complete(StatusCodes.OK, UserCreatedDTO(buyerId))
+        complete(StatusCodes.OK)
       }
     }
   )
-
-  //  def createBuyer(req: Request, res: Response): String = {
-  //    //    val auctionDTO = decode[BuyerDTO](req.body()).getOrThrow
-  //    //    userService.register(buyerDTO)
-  //    emptyBody
-  //  }
 }

@@ -1,20 +1,21 @@
 package utn.frba.iasc.service
 
-import utn.frba.iasc.db.UserRepository
+import akka.actor.ActorRef
+import utn.frba.iasc.actors.CreateUser
 import utn.frba.iasc.dto.BuyerDTO
 import utn.frba.iasc.model.Buyer
 
 class UserService(
-  private val userRepository: UserRepository,
+  private val usersActor: ActorRef
 ) {
-  def register(buyer: BuyerDTO, buyerId: String) {
-    userRepository.add {
-      Buyer(
-        id = buyerId,
-        username = buyer.username,
-        ip = buyer.ip,
-        interestTags = buyer.interestTags
-      )
-    }
+  def register(buyerDTO: BuyerDTO, buyerId: String) {
+    val buyer = Buyer(
+      id = buyerId,
+      username = buyerDTO.username,
+      ip = buyerDTO.ip,
+      interestTags = buyerDTO.interestTags
+    )
+
+    usersActor ! CreateUser(buyer)
   }
 }

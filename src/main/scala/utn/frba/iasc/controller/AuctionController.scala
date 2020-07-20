@@ -35,15 +35,4 @@ class AuctionController(
       }
     },
   )
-
-  //  def bid(req: Request, res: Response): PlacedBidDTO = {
-  //    val bidDTO = decode[BidDTO](req.body()).getOrThrow
-  //    val auctionId = req.params(":auction")
-  //    PlacedBidDTO(bidService.register(bidDTO, auctionId))
-  //  }
-  //
-  //  def createAuction(req: Request, res: Response): CreatedAuctionDTO = {
-  //    val auctionDTO = decode[AuctionDTO](req.body()).getOrThrow
-  //    CreatedAuctionDTO(auctionService.register(auctionDTO))
-  //  }
 }
