@@ -2,6 +2,8 @@ package utn.frba.iasc.model
 
 import java.time.LocalDateTime
 
+import utn.frba.iasc.dto._
+
 case class Auction(
   id: String,
   article: String,
@@ -17,6 +19,12 @@ case class Auction(
 
   def addBid(bid: Bid): Auction = if (status.canBid) copy(bids = bid :: bids) else
     throw new IllegalStateException("Can't bid on a closed or cancelled auction.")
+
+  def toDTO: AuctionDTO = AuctionDTO(
+    article = article,
+    bids = bids.map(_.toDTO),
+    status = status.toDTO
+  )
 }
 
 sealed abstract class AuctionStatus(val status: String) {
@@ -25,6 +33,8 @@ sealed abstract class AuctionStatus(val status: String) {
   def cancel(date: LocalDateTime): AuctionStatus
 
   def canBid: Boolean
+
+  def toDTO: AuctionStatusDTO
 }
 
 case object Open extends AuctionStatus("OPEN") {
@@ -42,6 +52,8 @@ case object Open extends AuctionStatus("OPEN") {
   override def cancel(date: LocalDateTime): AuctionStatus = Cancelled(date)
 
   override def canBid: Boolean = true
+
+  override def toDTO: AuctionStatusDTO = OpenDTO
 }
 
 case class Cancelled(cancelledOn: LocalDateTime) extends AuctionStatus("CANCELLED") {
@@ -53,6 +65,8 @@ case class Cancelled(cancelledOn: LocalDateTime) extends AuctionStatus("CANCELLE
   )
 
   override def canBid: Boolean = false
+
+  override def toDTO: AuctionStatusDTO = CancelledDTO(cancelledOn)
 }
 
 sealed trait Closed extends AuctionStatus {
@@ -70,6 +84,10 @@ case class ClosedWithWinner(
   closedOn: LocalDateTime,
   winner: Buyer,
   finalPrice: Int
-) extends AuctionStatus("WINNER") with Closed
+) extends AuctionStatus("WINNER") with Closed {
+  override def toDTO: AuctionStatusDTO = ClosedDTO(closedOn, Some(finalPrice), winner = Some(winner.username))
+}
 
-case class ClosedUnresolved(closedOn: LocalDateTime) extends AuctionStatus("UNRESOLVED") with Closed
+case class ClosedUnresolved(closedOn: LocalDateTime) extends AuctionStatus("UNRESOLVED") with Closed {
+  override def toDTO: AuctionStatusDTO = ClosedDTO(closedOn, None, None)
+}

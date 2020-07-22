@@ -10,19 +10,27 @@ import utn.frba.iasc.extensions.Kotlin
 import utn.frba.iasc.service.{AuctionService, BidService}
 import utn.frba.iasc.utils.IdGen
 
-class AuctionController(
+import scala.util.{Failure, Success}
+
+class AuctionCreatedController(
   private val auctionService: AuctionService,
   private val bidService: BidService,
   private val idGen: IdGen
-) extends Controller with Kotlin with AuctionCodec with CreatedAuctionCodec with BidCodec with BidPlacedCodec {
-  private val LOGGER: Logger = LoggerFactory.getLogger(classOf[AuctionController])
+) extends Controller with Kotlin with CreateAuctionCodec with AuctionCreatedCodec with PlaceBidCodec
+  with BidPlacedCodec
+  with AuctionFindCodec {
+  private val LOGGER: Logger = LoggerFactory.getLogger(classOf[AuctionCreatedController])
 
   override def routes: Route = concat(
     (path("auctions" / Segment) & get) { auctionId: String =>
-      ???
+      onComplete(auctionService.find(auctionId)) {
+        case Success(Some(a)) => complete(StatusCodes.OK, a.toDTO)
+        case Success(None) => complete(StatusCodes.NotFound, s"Auction $auctionId not found")
+        case Failure(_) => complete(StatusCodes.InternalServerError, s"Error searching $auctionId")
+      }
     },
     (path("auctions" / Segment / "bids") & post) { auctionId: String =>
-      entity(as[BidDTO]) { bid: BidDTO =>
+      entity(as[PutBidDTO]) { bid: PutBidDTO =>
         LOGGER.info(s"Create new bid on auction $auctionId")
         val bidId = idGen.bid
         bidService.place(bid, auctionId, bidId)
@@ -30,11 +38,11 @@ class AuctionController(
       }
     },
     (path("auctions") & post) {
-      entity(as[AuctionDTO]) { auction: AuctionDTO =>
+      entity(as[CreateAuctionDTO]) { auction: CreateAuctionDTO =>
         LOGGER.info("Create new auction")
         val id = idGen.auction
         auctionService.register(auction, id)
-        complete(StatusCodes.Accepted, CreatedAuctionDTO(id))
+        complete(StatusCodes.Accepted, AuctionCreatedDTO(id))
       }
     },
     (path("auctions" / Segment) & delete) { auctionId: String =>

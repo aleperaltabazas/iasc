@@ -3,7 +3,7 @@ package utn.frba.iasc.service
 import akka.actor.ActorRef
 import utn.frba.iasc.actors.PlaceBid
 import utn.frba.iasc.db.{AuctionRepository, BidRepository, UserRepository}
-import utn.frba.iasc.dto.BidDTO
+import utn.frba.iasc.dto.PutBidDTO
 import utn.frba.iasc.model.Bid
 
 class BidService(
@@ -12,7 +12,7 @@ class BidService(
   private val auctionRepository: AuctionRepository,
   private val auctionActor: ActorRef
 ) {
-  def place(bidDTO: BidDTO, auctionId: String, bidId: String) {
+  def place(bidDTO: PutBidDTO, auctionId: String, bidId: String) {
     val bid = Bid(
       id = bidId,
       bidDTO.offer,

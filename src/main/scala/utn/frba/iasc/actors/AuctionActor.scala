@@ -3,7 +3,7 @@ package utn.frba.iasc.actors
 import akka.actor.{Actor, ActorLogging, ActorSystem}
 import org.slf4j.{Logger, LoggerFactory}
 import utn.frba.iasc.db.{AuctionRepository, BidRepository, JobsRepository}
-import utn.frba.iasc.model.{Auction, ClosedUnresolved, ClosedWithWinner}
+import utn.frba.iasc.model.{ClosedUnresolved, ClosedWithWinner}
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -59,8 +59,8 @@ class AuctionActor(
       LOGGER.info(s"Cancelling auction $id")
       auctionRepository.update(cancelledAuction)
       jobsRepository.cancel(id)
-    case FindAuction(id) => auctionRepository.find(id)
+    case FindAuction(id) =>
+      LOGGER.info(s"Search auction $id")
+      context.sender().tell(auctionRepository.find(id), self)
   }
-
-  def find(id: String): Option[Auction] = auctionRepository.find(id)
 }

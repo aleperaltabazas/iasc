@@ -1,28 +1,26 @@
 package utn.frba.iasc.dto
 
-import io.circe.Encoder
-import io.circe._
 import io.circe.generic.semiauto._
-import utn.frba.iasc.model.{Auction, Bid}
+import io.circe.{Encoder, _}
 
 trait BuyerCodec {
   implicit val buyerEncoder: Encoder[BuyerDTO] = deriveEncoder[BuyerDTO]
   implicit val buyerDecoder: Decoder[BuyerDTO] = deriveDecoder[BuyerDTO]
 }
 
-trait AuctionCodec {
-  implicit val auctionEncoder: Encoder[AuctionDTO] = deriveEncoder[AuctionDTO]
-  implicit val auctionDecoder: Decoder[AuctionDTO] = deriveDecoder[AuctionDTO]
+trait CreateAuctionCodec {
+  implicit val createAuctionEncoder: Encoder[CreateAuctionDTO] = deriveEncoder[CreateAuctionDTO]
+  implicit val createAuctionDecoder: Decoder[CreateAuctionDTO] = deriveDecoder[CreateAuctionDTO]
 }
 
-trait BidCodec {
-  implicit val bidEncoder: Encoder[BidDTO] = deriveEncoder[BidDTO]
-  implicit val bidDecoder: Decoder[BidDTO] = deriveDecoder[BidDTO]
+trait PlaceBidCodec {
+  implicit val placeBidEncoder: Encoder[PutBidDTO] = deriveEncoder[PutBidDTO]
+  implicit val placeBidDecoder: Decoder[PutBidDTO] = deriveDecoder[PutBidDTO]
 }
 
-trait CreatedAuctionCodec {
-  implicit val createdAuctionEncoder: Encoder[CreatedAuctionDTO] = deriveEncoder[CreatedAuctionDTO]
-  implicit val createdAuctionDecoder: Decoder[CreatedAuctionDTO] = deriveDecoder[CreatedAuctionDTO]
+trait AuctionCreatedCodec {
+  implicit val auctionCreatedEncoder: Encoder[AuctionCreatedDTO] = deriveEncoder[AuctionCreatedDTO]
+  implicit val auctionCreatedDecoder: Decoder[AuctionCreatedDTO] = deriveDecoder[AuctionCreatedDTO]
 }
 
 trait BidPlacedCodec {
@@ -36,8 +34,14 @@ trait UserCodec {
 }
 
 trait AuctionFindCodec {
-  implicit val auctionFindEncoder: Encoder[Auction] = deriveEncoder[Auction]
-  implicit val auctionFindDecoder: Decoder[Auction] = deriveDecoder[Auction]
-  implicit val bidEncoder: Encoder[Bid] = deriveEncoder[Bid]
-  implicit val bidDecoder: Decoder[Bid] = deriveDecoder[Bid]
+  implicit val auctionEncoder: Encoder[AuctionDTO] = deriveEncoder[AuctionDTO]
+  implicit val auctionDecoder: Decoder[AuctionDTO] = deriveDecoder[AuctionDTO]
+  implicit val bidEncoder: Encoder[BidDTO] = deriveEncoder[BidDTO]
+  implicit val bidDecoder: Decoder[BidDTO] = deriveDecoder[BidDTO]
+  implicit val openEncoder: Encoder[AuctionStatusDTO] = deriveEncoder[AuctionStatusDTO]
+  implicit val openDecoder: Decoder[AuctionStatusDTO] = deriveDecoder[AuctionStatusDTO]
+  implicit val cancelledEncoder: Encoder[CancelledDTO] = deriveEncoder[CancelledDTO]
+  implicit val cancelledDecoder: Decoder[CancelledDTO] = deriveDecoder[CancelledDTO]
+  implicit val closedEncoder: Encoder[ClosedDTO] = deriveEncoder[ClosedDTO]
+  implicit val closedDecoder: Decoder[ClosedDTO] = deriveDecoder[ClosedDTO]
 }
