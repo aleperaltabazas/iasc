@@ -6,7 +6,7 @@ import akka.util.Timeout
 import utn.frba.iasc.actors.{CancelAuction, CreateAuction, FindAuction, FindFirstByUsername}
 import utn.frba.iasc.dto.CreateAuctionDTO
 import utn.frba.iasc.exception.NotFoundException
-import utn.frba.iasc.model.{Auction, Open}
+import utn.frba.iasc.model.{Auction, Buyer, Open}
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
@@ -21,24 +21,28 @@ class AuctionService(
 
   def register(auctionDTO: CreateAuctionDTO, id: String): Future[Unit] = {
     usersActor.ask(FindFirstByUsername(auctionDTO.seller))
-      .mapTo[Boolean]
+      .mapTo[Option[Buyer]]
       .map {
-        case false => throw new NotFoundException(s"User ${auctionDTO.seller} not found")
-        case true =>
+        case None => throw new NotFoundException(s"User ${auctionDTO.seller} not found")
+        case Some(_) =>
           val auction = Auction(
             id = id,
             article = auctionDTO.article,
             status = Open,
-            basePrice = auctionDTO.basePrice
+            basePrice = auctionDTO.basePrice,
+            seller = auctionDTO.seller
           )
 
           auctionActor ! CreateAuction(auction, auctionDTO.maxDuration)
       }
   }
 
-  def cancel(id: String): Unit = {
-    auctionActor ! CancelAuction(id)
-  }
+  def cancel(id: String): Unit = auctionActor ! CancelAuction(id)
 
-  def find(id: String): Future[Option[Auction]] = ask(auctionActor, FindAuction(id)).mapTo[Option[Auction]]
+  def find(id: String): Future[Auction] = ask(auctionActor, FindAuction(id))
+    .mapTo[Option[Auction]]
+    .map {
+      case Some(a) => a
+      case None => throw new NotFoundException(s"Auction $id not found")
+    }
 }

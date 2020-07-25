@@ -3,7 +3,6 @@ package utn.frba.iasc.injection
 import akka.actor.{ActorRef, ActorSystem}
 import com.google.inject.name.Named
 import com.google.inject.{AbstractModule, Provides, Singleton}
-import utn.frba.iasc.db.{AuctionRepository, BidRepository, UserRepository}
 import utn.frba.iasc.service.{AuctionService, BidService, UserService}
 
 import scala.concurrent.ExecutionContextExecutor
@@ -37,14 +36,12 @@ object ServiceModule extends AbstractModule {
   @Singleton
   @Named("bidService")
   def bidService(
-    @Named("bidRepository") bidRepository: BidRepository,
-    @Named("userRepository") userRepository: UserRepository,
-    @Named("auctionRepository") auctionRepository: AuctionRepository,
-    @Named("auctionActorRef") auctionActorRef: ActorRef
+    @Named("auctionActorRef") auctionActorRef: ActorRef,
+    @Named("usersActorRef") usersActor: ActorRef,
+    @Named("executionContext") executionContextExecutor: ExecutionContextExecutor
   ): BidService = new BidService(
-    bidRepository = bidRepository,
-    userRepository = userRepository,
-    auctionRepository = auctionRepository,
-    auctionActor = auctionActorRef
+    auctionActor = auctionActorRef,
+    usersActor = usersActor,
+    executionContext = executionContextExecutor
   )
 }

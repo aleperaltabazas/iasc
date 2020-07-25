@@ -28,17 +28,18 @@ class AuctionController(
   override def routes: Route = concat(
     (path("auctions" / Segment) & get) { auctionId: String =>
       onComplete(auctionService.find(auctionId)) {
-        case Success(Some(a)) => complete(StatusCodes.OK, a.toDTO)
-        case Success(None) => complete(StatusCodes.NotFound, s"Auction $auctionId not found")
-        case Failure(_) => complete(StatusCodes.InternalServerError, s"Error searching $auctionId")
+        case Success(a) => complete(StatusCodes.OK, a.toDTO)
+        case Failure(e) => handle(e)
       }
     },
     (path("auctions" / Segment / "bids") & put) { auctionId: String =>
       entity(as[PlaceBidDTO]) { bid: PlaceBidDTO =>
         LOGGER.info(s"Create new bid on auction $auctionId")
         val bidId = idGen.bid
-        bidService.place(bid, auctionId, bidId)
-        complete(StatusCodes.Accepted, PlacedBidDTO(bidId))
+        onComplete(bidService.place(bid, auctionId, bidId)) {
+          case Failure(exception) => handle(exception)
+          case Success(_) => complete(StatusCodes.Accepted, PlacedBidDTO(bidId))
+        }
       }
     },
     (path("auctions") & post) {

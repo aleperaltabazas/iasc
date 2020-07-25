@@ -9,7 +9,8 @@ case class Auction(
   article: String,
   status: AuctionStatus,
   basePrice: Int,
-  bids: List[Bid] = List()
+  bids: List[Bid] = List(),
+  seller: String
 ) extends Entity {
   def isOpen: Boolean = status == Open
 

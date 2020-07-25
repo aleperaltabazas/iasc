@@ -20,10 +20,10 @@ class UserService(
 
   def register(buyerDTO: BuyerDTO, buyerId: String): Future[Unit] = {
     usersActor.ask(FindFirstByUsername(buyerDTO.username))
-      .mapTo[Boolean]
+      .mapTo[Option[Buyer]]
       .map {
-        case true => throw new UsernameAlreadyExistsException(buyerDTO.username)
-        case false =>
+        case Some(_) => throw new UsernameAlreadyExistsException(buyerDTO.username)
+        case None =>
           val buyer = Buyer(
             id = buyerId,
             username = buyerDTO.username,

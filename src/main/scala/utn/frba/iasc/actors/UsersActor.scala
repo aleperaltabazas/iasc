@@ -17,6 +17,6 @@ class UsersActor(
       LOGGER.info("Finding users matching condition")
       val users = userRepository.findAll(f)
       context.sender().tell(users, self)
-    case FindFirstByUsername(username) => context.sender().tell(userRepository.exists(_.username == username), self)
+    case FindFirstByUsername(username) => context.sender().tell(userRepository.find(_.username == username), self)
   }
 }
