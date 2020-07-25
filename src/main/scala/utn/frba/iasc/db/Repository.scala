@@ -13,6 +13,10 @@ abstract class Repository[T <: Entity](
     elements = e :: elements
   }
 
+  def exists(e: T): Boolean = elements.contains(e)
+
+  def exists(condition: T => Boolean): Boolean = elements.exists(condition)
+
   def remove(e: T): Unit = removeBy(_.id == e.id)
 
   def removeBy(f: T => Boolean): Unit = {
