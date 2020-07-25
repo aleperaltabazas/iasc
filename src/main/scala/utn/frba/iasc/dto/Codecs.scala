@@ -14,8 +14,8 @@ trait CreateAuctionCodec {
 }
 
 trait PlaceBidCodec {
-  implicit val placeBidEncoder: Encoder[PutBidDTO] = deriveEncoder[PutBidDTO]
-  implicit val placeBidDecoder: Decoder[PutBidDTO] = deriveDecoder[PutBidDTO]
+  implicit val placeBidEncoder: Encoder[PlaceBidDTO] = deriveEncoder[PlaceBidDTO]
+  implicit val placeBidDecoder: Decoder[PlaceBidDTO] = deriveDecoder[PlaceBidDTO]
 }
 
 trait AuctionCreatedCodec {

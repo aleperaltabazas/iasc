@@ -7,6 +7,8 @@ abstract class Repository[T <: Entity](
 ) {
   def find(id: String): Option[T] = elements.find(_.id == id)
 
+  def find(condition: T => Boolean): Option[T] = elements.find(condition)
+
   def add(e: T): Unit = {
     elements = e :: elements
   }

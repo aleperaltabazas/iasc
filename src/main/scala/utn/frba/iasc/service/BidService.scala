@@ -3,7 +3,7 @@ package utn.frba.iasc.service
 import akka.actor.ActorRef
 import utn.frba.iasc.actors.PlaceBid
 import utn.frba.iasc.db.{AuctionRepository, BidRepository, UserRepository}
-import utn.frba.iasc.dto.PutBidDTO
+import utn.frba.iasc.dto.PlaceBidDTO
 import utn.frba.iasc.model.Bid
 
 class BidService(
@@ -12,12 +12,12 @@ class BidService(
   private val auctionRepository: AuctionRepository,
   private val auctionActor: ActorRef
 ) {
-  def place(bidDTO: PutBidDTO, auctionId: String, bidId: String) {
+  def place(bidDTO: PlaceBidDTO, auctionId: String, bidId: String) {
     val bid = Bid(
       id = bidId,
       bidDTO.offer,
-      buyer = userRepository.find(bidDTO.buyerId).getOrElse {
-        throw new NoSuchElementException(s"No buyer found with ID ${bidDTO.buyerId}")
+      buyer = userRepository.find(_.username == bidDTO.buyer).getOrElse {
+        throw new NoSuchElementException(s"No buyer found with ID ${bidDTO.buyer}")
       }
     )
 

@@ -35,7 +35,7 @@ class AuctionActor(
 
       closedAuction.status match {
         case ClosedWithWinner(_, winner, losers, finalPrice) =>
-          LOGGER.info(s"Buyer ${winner.username} won with bid of $finalPrice")
+          LOGGER.info(s"Buyer ${winner.username} won with an offer of $finalPrice buck-os")
           callbackActor ! CallbackTo(endpoint = winner.ip, auction = auctionId, result = Winner)
           losers.foreach { l =>
             callbackActor ! CallbackTo(endpoint = l.ip, auction = auctionId, result = Loser)

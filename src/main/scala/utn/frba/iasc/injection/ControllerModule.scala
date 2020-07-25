@@ -2,7 +2,7 @@ package utn.frba.iasc.injection
 
 import com.google.inject.name.Named
 import com.google.inject.{AbstractModule, Provides, Singleton}
-import utn.frba.iasc.controller.{AuctionCreatedController, BuyersController}
+import utn.frba.iasc.controller.{AuctionController, BuyersController}
 import utn.frba.iasc.service.{AuctionService, BidService, UserService}
 import utn.frba.iasc.utils.IdGen
 
@@ -14,7 +14,7 @@ object ControllerModule extends AbstractModule {
     @Named("auctionService") auctionService: AuctionService,
     @Named("bidService") bidService: BidService,
     @Named("idGen") idGen: IdGen
-  ): AuctionCreatedController = new AuctionCreatedController(
+  ): AuctionController = new AuctionController(
     auctionService = auctionService,
     bidService = bidService,
     idGen = idGen

@@ -12,7 +12,7 @@ import utn.frba.iasc.utils.IdGen
 
 import scala.util.{Failure, Success}
 
-class AuctionCreatedController(
+class AuctionController(
   private val auctionService: AuctionService,
   private val bidService: BidService,
   private val idGen: IdGen
@@ -23,7 +23,7 @@ class AuctionCreatedController(
   with PlaceBidCodec
   with BidPlacedCodec
   with AuctionFindCodec {
-  private val LOGGER: Logger = LoggerFactory.getLogger(classOf[AuctionCreatedController])
+  private val LOGGER: Logger = LoggerFactory.getLogger(classOf[AuctionController])
 
   override def routes: Route = concat(
     (path("auctions" / Segment) & get) { auctionId: String =>
@@ -33,8 +33,8 @@ class AuctionCreatedController(
         case Failure(_) => complete(StatusCodes.InternalServerError, s"Error searching $auctionId")
       }
     },
-    (path("auctions" / Segment / "bids") & post) { auctionId: String =>
-      entity(as[PutBidDTO]) { bid: PutBidDTO =>
+    (path("auctions" / Segment / "bids") & put) { auctionId: String =>
+      entity(as[PlaceBidDTO]) { bid: PlaceBidDTO =>
         LOGGER.info(s"Create new bid on auction $auctionId")
         val bidId = idGen.bid
         bidService.place(bid, auctionId, bidId)

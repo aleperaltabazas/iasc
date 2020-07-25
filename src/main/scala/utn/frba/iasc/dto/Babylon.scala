@@ -12,11 +12,12 @@ case class CreateAuctionDTO(
   tags: List[String],
   basePrice: Int = 0,
   maxDuration: Int,
-  article: String
+  article: String,
+  seller: String
 )
 
-case class PutBidDTO(
-  buyerId: String,
+case class PlaceBidDTO(
+  buyer: String,
   offer: Int
 )
 
