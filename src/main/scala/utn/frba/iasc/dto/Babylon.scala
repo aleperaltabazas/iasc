@@ -46,3 +46,14 @@ case class ClosedDTO(
   finalPrice: Option[Int],
   winner: Option[String]
 ) extends AuctionStatusDTO
+
+sealed trait PerUserResultDTO
+
+case object Winner extends PerUserResultDTO
+case object Loser extends PerUserResultDTO
+case object Cancelled extends PerUserResultDTO
+
+case class CallbackDTO(
+  auction: String,
+  result: PerUserResultDTO
+)

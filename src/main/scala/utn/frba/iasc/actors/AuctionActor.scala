@@ -1,8 +1,9 @@
 package utn.frba.iasc.actors
 
-import akka.actor.{Actor, ActorLogging, ActorSystem}
+import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem}
 import org.slf4j.{Logger, LoggerFactory}
 import utn.frba.iasc.db.{AuctionRepository, BidRepository, JobsRepository}
+import utn.frba.iasc.dto.{Loser, Winner}
 import utn.frba.iasc.model.{ClosedUnresolved, ClosedWithWinner}
 
 import scala.concurrent.duration._
@@ -12,6 +13,7 @@ class AuctionActor(
   private val auctionRepository: AuctionRepository,
   private val bidRepository: BidRepository,
   private val jobsRepository: JobsRepository,
+  private val callbackActor: ActorRef,
   private val system: ActorSystem
 ) extends Actor with ActorLogging {
   private val LOGGER: Logger = LoggerFactory.getLogger(classOf[AuctionActor])
@@ -32,8 +34,12 @@ class AuctionActor(
       val closedAuction = auction.closed()
 
       closedAuction.status match {
-        case ClosedWithWinner(_, winner, finalPrice) =>
+        case ClosedWithWinner(_, winner, losers, finalPrice) =>
           LOGGER.info(s"Buyer ${winner.username} won with bid of $finalPrice")
+          callbackActor ! CallbackTo(endpoint = winner.ip, auction = auctionId, result = Winner)
+          losers.foreach { l =>
+            callbackActor ! CallbackTo(endpoint = l.ip, auction = auctionId, result = Loser)
+          }
         case ClosedUnresolved(_) => LOGGER.info(s"No winner for auction ${auction.id}")
       }
 

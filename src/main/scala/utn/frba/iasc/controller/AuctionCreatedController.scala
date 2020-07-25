@@ -16,7 +16,11 @@ class AuctionCreatedController(
   private val auctionService: AuctionService,
   private val bidService: BidService,
   private val idGen: IdGen
-) extends Controller with Kotlin with CreateAuctionCodec with AuctionCreatedCodec with PlaceBidCodec
+) extends Controller
+  with Kotlin
+  with CreateAuctionCodec
+  with AuctionCreatedCodec
+  with PlaceBidCodec
   with BidPlacedCodec
   with AuctionFindCodec {
   private val LOGGER: Logger = LoggerFactory.getLogger(classOf[AuctionCreatedController])

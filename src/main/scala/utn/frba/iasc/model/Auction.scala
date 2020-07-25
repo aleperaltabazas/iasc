@@ -43,7 +43,8 @@ case object Open extends AuctionStatus("OPEN") {
       case Some(winner) => ClosedWithWinner(
         date,
         finalPrice = winner.offer,
-        winner = winner.buyer
+        winner = winner.buyer,
+        losers = bids.map(_.buyer).filterNot(_ == winner.buyer)
       )
       case None => ClosedUnresolved(date)
     }
@@ -83,6 +84,7 @@ sealed trait Closed extends AuctionStatus {
 case class ClosedWithWinner(
   closedOn: LocalDateTime,
   winner: Buyer,
+  losers: List[Buyer],
   finalPrice: Int
 ) extends AuctionStatus("WINNER") with Closed {
   override def toDTO: AuctionStatusDTO = ClosedDTO(closedOn, Some(finalPrice), winner = Some(winner.username))
