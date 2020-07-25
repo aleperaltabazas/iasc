@@ -7,3 +7,9 @@ case class CallbackTo(
   auction: String,
   result: PerUserResultDTO
 )
+
+case class InformNewAuction(
+  auctionId: String,
+  startingPrice: Int,
+  tags: List[String]
+)

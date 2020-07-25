@@ -13,5 +13,9 @@ class UsersActor(
     case CreateUser(buyer) =>
       LOGGER.info(s"Create user ${buyer.username}")
       userRepository.add(buyer)
+    case FindAllSuchThat(f) =>
+      LOGGER.info("Finding users matching condition")
+      val users = userRepository.findAll(f)
+      context.sender().tell(users, self)
   }
 }

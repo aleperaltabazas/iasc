@@ -17,9 +17,9 @@ abstract class Repository[T <: Entity](
     elements = elements.filterNot(f)
   }
 
-  def all: List[T] = all(_ => true)
+  def findAll: List[T] = findAll(_ => true)
 
-  def all(f: T => Boolean): List[T] = elements.filter(f)
+  def findAll(f: T => Boolean): List[T] = elements.filter(f)
 
   def update(t: T): Unit = {
     elements = t :: elements.filterNot(_.id == t.id)

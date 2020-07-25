@@ -17,6 +17,7 @@ object Babylon {
   def main(args: Array[String]) {
     val injector = Guice.createInjector(
       ActorsModule,
+      ContextModule,
       ControllerModule,
       RepositoryModule,
       ServiceModule,
@@ -27,7 +28,8 @@ object Babylon {
       .getInstance(Key.get(classOf[ActorSystem], Names.named("actorSystem")))
     implicit val materializer: ActorMaterializer = injector
       .getInstance(Key.get(classOf[ActorMaterializer], Names.named("materializer")))
-    implicit val executionContext: ExecutionContextExecutor = system.dispatcher
+    implicit val executionContext: ExecutionContextExecutor = injector
+      .getInstance(Key.get(classOf[ExecutionContextExecutor], Names.named("executionContext")))
 
     val routes = injector.getAllBindings.asScala.keys
       .filter { it => classOf[Controller].isAssignableFrom(it.getTypeLiteral.getRawType) }
