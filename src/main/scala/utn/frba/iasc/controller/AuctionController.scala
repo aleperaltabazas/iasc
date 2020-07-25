@@ -45,8 +45,10 @@ class AuctionController(
       entity(as[CreateAuctionDTO]) { auction: CreateAuctionDTO =>
         LOGGER.info("Create new auction")
         val id = idGen.auction
-        auctionService.register(auction, id)
-        complete(StatusCodes.Accepted, AuctionCreatedDTO(id))
+        onComplete(auctionService.register(auction, id)) {
+          case Failure(exception) => handle(exception)
+          case Success(_) => complete(StatusCodes.Accepted, AuctionCreatedDTO(id))
+        }
       }
     },
     (path("auctions" / Segment) & delete) { auctionId: String =>

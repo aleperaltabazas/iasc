@@ -6,14 +6,20 @@ import com.google.inject.{AbstractModule, Provides, Singleton}
 import utn.frba.iasc.db.{AuctionRepository, BidRepository, UserRepository}
 import utn.frba.iasc.service.{AuctionService, BidService, UserService}
 
+import scala.concurrent.ExecutionContextExecutor
+
 object ServiceModule extends AbstractModule {
   @Provides
   @Singleton
   @Named("auctionService")
   def auctionService(
-    @Named("auctionActorRef") auctionActor: ActorRef
+    @Named("auctionActorRef") auctionActor: ActorRef,
+    @Named("usersActorRef") usersActor: ActorRef,
+    @Named("executionContext") executionContext: ExecutionContextExecutor
   ): AuctionService = new AuctionService(
-    auctionActor = auctionActor
+    auctionActor = auctionActor,
+    usersActor = usersActor,
+    executionContext = executionContext
   )
 
   @Provides

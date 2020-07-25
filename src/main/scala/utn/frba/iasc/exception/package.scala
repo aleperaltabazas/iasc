@@ -10,6 +10,7 @@ package object exception {
   abstract class HttpException(message: String, val status: StatusCode) extends RuntimeException(message)
 
   class BadRequestException(message: String) extends HttpException(message, StatusCodes.BadRequest)
+  class NotFoundException(message: String) extends HttpException(message, StatusCodes.NotFound)
 
   class UsernameAlreadyExistsException(val username: String)
     extends BadRequestException(s"Username $username is already taken")
