@@ -6,8 +6,11 @@ import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import org.slf4j.{Logger, LoggerFactory}
 import utn.frba.iasc.dto.{BuyerCodec, BuyerDTO, UserCodec}
+import utn.frba.iasc.exception.HttpException
 import utn.frba.iasc.service.UserService
 import utn.frba.iasc.utils.IdGen
+
+import scala.util.{Failure, Success}
 
 class BuyersController(
   private val userService: UserService,
@@ -20,8 +23,13 @@ class BuyersController(
       entity(as[BuyerDTO]) { buyer: BuyerDTO =>
         LOGGER.info("New buyer")
         val buyerId = idGen.user
-        userService.register(buyer, buyerId)
-        complete(StatusCodes.OK)
+        onComplete(userService.register(buyer, buyerId)) {
+          case Failure(exception) => exception match {
+            case HttpException(message, status) => complete(status, message)
+            case _ => complete(StatusCodes.InternalServerError, exception.getMessage)
+          }
+          case Success(_) => complete(StatusCodes.OK)
+        }
       }
     }
   )

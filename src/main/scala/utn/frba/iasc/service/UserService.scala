@@ -1,21 +1,37 @@
 package utn.frba.iasc.service
 
 import akka.actor.ActorRef
-import utn.frba.iasc.actors.CreateUser
+import akka.pattern.ask
+import akka.util.Timeout
+import utn.frba.iasc.actors.{CreateUser, FindFirstByUsername}
 import utn.frba.iasc.dto.BuyerDTO
+import utn.frba.iasc.exception.UsernameAlreadyExistsException
 import utn.frba.iasc.model.Buyer
 
-class UserService(
-  private val usersActor: ActorRef
-) {
-  def register(buyerDTO: BuyerDTO, buyerId: String) {
-    val buyer = Buyer(
-      id = buyerId,
-      username = buyerDTO.username,
-      ip = buyerDTO.ip,
-      interestTags = buyerDTO.interestTags
-    )
+import scala.concurrent.duration._
+import scala.concurrent.{ExecutionContext, Future}
+import scala.language.postfixOps
 
-    usersActor ! CreateUser(buyer)
+class UserService(
+  private val usersActor: ActorRef,
+  private implicit val executionContext: ExecutionContext
+) {
+  private implicit val findTimeout: Timeout = 5 seconds
+
+  def register(buyerDTO: BuyerDTO, buyerId: String): Future[Unit] = {
+    usersActor.ask(FindFirstByUsername(buyerDTO.username))
+      .mapTo[Option[Buyer]]
+      .map {
+        case None =>
+          val buyer = Buyer(
+            id = buyerId,
+            username = buyerDTO.username,
+            ip = buyerDTO.ip,
+            interestTags = buyerDTO.interestTags
+          )
+
+          usersActor ! CreateUser(buyer)
+        case Some(_) => throw new UsernameAlreadyExistsException(buyerDTO.username)
+      }
   }
 }
