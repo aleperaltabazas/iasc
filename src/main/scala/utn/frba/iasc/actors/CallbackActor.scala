@@ -27,7 +27,8 @@ class CallbackActor(
         .mapTo[List[Buyer]]
         .onComplete {
           case Failure(e) => LOGGER.error(s"Error retrieving users interested in $tags", e)
-          case Success(users) => users.foreach(u => LOGGER.info(s"Hey, ${u.username}! Check this auction: $id"))
+          case Success(users) => users.foreach(u => LOGGER.info(s"Hey, ${u.username}! Check this auction: $id valued " +
+            s"at $price"))
         }
   }
 }
