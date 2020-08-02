@@ -3,6 +3,11 @@ package utn.frba.iasc.actors
 import akka.actor.{Actor, ActorLogging}
 import org.slf4j.LoggerFactory
 import utn.frba.iasc.db.UserRepository
+import utn.frba.iasc.model.Buyer
+
+object UsersActor {
+  case class CreateUser(buyer: Buyer)
+}
 
 class UsersActor(
   private val userRepository: UserRepository

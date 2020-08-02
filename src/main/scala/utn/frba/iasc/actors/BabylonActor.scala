@@ -1,6 +1,6 @@
 package utn.frba.iasc.actors
 
-import akka.actor.{Actor, ActorRef, ActorSystem}
+import akka.actor._
 import akka.pattern.{ask, pipe}
 import akka.util.Timeout
 import org.slf4j.LoggerFactory
