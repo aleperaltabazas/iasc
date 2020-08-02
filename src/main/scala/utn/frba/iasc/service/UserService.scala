@@ -13,13 +13,13 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
 class UserService(
-  private val babylonActor: ActorRef,
+  private val routerActor: ActorRef,
   private implicit val executionContext: ExecutionContext
 ) {
   private implicit val findTimeout: Timeout = 5 seconds
 
   def register(buyerDTO: BuyerDTO, buyerId: String): Future[Unit] = {
-    babylonActor.ask(FindFirstByUsername(buyerDTO.username))
+    routerActor.ask(FindFirstByUsername(buyerDTO.username))
       .mapTo[Option[Buyer]]
       .map {
         case Some(_) => throw new UsernameAlreadyExistsException(buyerDTO.username)
@@ -31,7 +31,7 @@ class UserService(
             interestTags = buyerDTO.interestTags
           )
 
-          babylonActor ! CreateUser(buyer)
+          routerActor ! CreateUser(buyer)
       }
   }
 }

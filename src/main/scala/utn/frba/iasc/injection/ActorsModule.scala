@@ -57,8 +57,17 @@ case object ActorsModule extends AbstractModule {
   @Named("routerActorRef")
   def routerActor(
     @Named("actorSystem") system: ActorSystem,
-    @Named("executionContext") executionContextExecutor: ExecutionContextExecutor
+    @Named("executionContext") executionContextExecutor: ExecutionContextExecutor,
+    @Named("usersActorRef") usersActor: ActorRef,
+    @Named("auctionActorRef") auctionActor: ActorRef
   ): ActorRef = system.actorOf(
-    Props(new RouterActor(system = system, executionContext = executionContextExecutor)), "routerActor"
+    Props(
+      new RouterActor(
+        system = system,
+        executionContext = executionContextExecutor,
+        usersActor = usersActor,
+        auctionActor = auctionActor
+      )
+    ), "routerActor"
   )
 }

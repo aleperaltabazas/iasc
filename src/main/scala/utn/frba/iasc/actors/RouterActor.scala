@@ -1,10 +1,10 @@
 package utn.frba.iasc.actors
 
-import akka.actor.{Actor, ActorRef, ActorSystem}
-import akka.pattern.ask
+import akka.actor.{Actor, ActorRef, ActorSystem, Props}
+import akka.pattern.{ask, pipe}
 import akka.util.Timeout
+import org.slf4j.LoggerFactory
 import utn.frba.iasc.extensions.Kotlin
-import utn.frba.iasc.model.{Auction, Buyer}
 
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext
@@ -13,27 +13,38 @@ import scala.language.postfixOps
 
 class RouterActor(
   private val system: ActorSystem,
-  private implicit val executionContext: ExecutionContext
+  private implicit val executionContext: ExecutionContext,
+  private val usersActor: ActorRef,
+  private val auctionActor: ActorRef
 ) extends Actor with Kotlin {
   private implicit val timeout: Timeout = Timeout(5 seconds)
-  private val babylons: mutable.Seq[ActorRef] = mutable.Seq.empty
+  private val babylons: mutable.Seq[ActorRef] = mutable.Seq(
+    spawnBabylon,
+    spawnBabylon,
+    spawnBabylon
+  )
 
   override def receive: Receive = {
     case c@CreateAuction(auction, _) => select(auction.id) ! c
     case c@CloseAuction(auctionId) => select(auctionId) ! c
     case p@PlaceBid(_, auctionId) => select(auctionId) ! p
     case c@CancelAuction(auctionId) => select(auctionId) ! c
-    case f@FindAuction(auctionId) => select(auctionId).ask(f)
-      .mapTo[Auction]
-      .foreach(a => context.sender().tell(a, self))
+    case f@FindAuction(auctionId) => select(auctionId).ask(f) pipeTo context.sender()
     case c@CreateUser(u) => select(u.id) ! c
-    case f@FindAllSuchThat(_) => babylons.head.ask(f)
-      .mapTo[List[Auction]]
-      .foreach(as => context.sender().tell(as, self))
-    case f@FindFirstByUsername(username) => select(username).ask(f)
-      .mapTo[Buyer]
-      .foreach(b => context.sender().tell(b, self))
+    case f@FindAllSuchThat(_) => babylons.head.ask(f) pipeTo context.sender()
+    case f@FindFirstByUsername(username) => select(username).ask(f) pipeTo context.sender()
   }
 
-  private def select(str: String): ActorRef = str.last.let { it => babylons(it.toInt % babylons.length) }
+  private def select(str: String): ActorRef = {
+    val last = str.last.toInt % babylons.length
+    babylons(last)
+  }
+
+  private def spawnBabylon: ActorRef = system.actorOf(
+    Props(
+      new BabylonActor(auctionActor, usersActor, system, executionContext)
+    )
+  )
+
+  private val LOGGER = LoggerFactory.getLogger(classOf[RouterActor])
 }

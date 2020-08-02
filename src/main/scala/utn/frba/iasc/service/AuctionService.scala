@@ -13,13 +13,13 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
 class AuctionService(
-  private val babylonActor: ActorRef,
+  private val routerActor: ActorRef,
   private implicit val executionContext: ExecutionContext
 ) {
   private implicit val findTimeout: Timeout = Timeout(5 seconds)
 
   def register(auctionDTO: CreateAuctionDTO, id: String): Future[Unit] = {
-    babylonActor.ask(FindFirstByUsername(auctionDTO.seller))
+    routerActor.ask(FindFirstByUsername(auctionDTO.seller))
       .mapTo[Option[Buyer]]
       .map {
         case None => throw new NotFoundException(s"User ${auctionDTO.seller} not found")
@@ -32,13 +32,13 @@ class AuctionService(
             seller = auctionDTO.seller
           )
 
-          babylonActor ! CreateAuction(auction, auctionDTO.maxDuration)
+          routerActor ! CreateAuction(auction, auctionDTO.maxDuration)
       }
   }
 
-  def cancel(id: String): Unit = babylonActor ! CancelAuction(id)
+  def cancel(id: String): Unit = routerActor ! CancelAuction(id)
 
-  def find(id: String): Future[Auction] = babylonActor.ask(FindAuction(id))
+  def find(id: String): Future[Auction] = routerActor.ask(FindAuction(id))
     .mapTo[Option[Auction]]
     .map {
       case Some(a) => a

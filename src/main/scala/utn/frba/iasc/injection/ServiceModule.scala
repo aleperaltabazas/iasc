@@ -15,7 +15,7 @@ object ServiceModule extends AbstractModule {
     @Named("routerActorRef") routerActor: ActorRef,
     @Named("executionContext") executionContext: ExecutionContextExecutor
   ): AuctionService = new AuctionService(
-    babylonActor = routerActor,
+    routerActor = routerActor,
     executionContext = executionContext
   )
 
@@ -23,10 +23,10 @@ object ServiceModule extends AbstractModule {
   @Singleton
   @Named("userService")
   def userService(
-    @Named("usersActorRef") usersActor: ActorRef,
+    @Named("routerActorRef") routerActor: ActorRef,
     @Named("actorSystem") system: ActorSystem
   ): UserService = new UserService(
-    babylonActor = usersActor,
+    routerActor = routerActor,
     executionContext = system.dispatcher
   )
 
