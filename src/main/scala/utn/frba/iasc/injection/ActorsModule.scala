@@ -4,7 +4,7 @@ import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.stream.ActorMaterializer
 import com.google.inject.name.Named
 import com.google.inject.{AbstractModule, Provides, Singleton}
-import utn.frba.iasc.actors.{AuctionActor, CallbackActor, RouterActor, UsersActor}
+import utn.frba.iasc.actors._
 import utn.frba.iasc.db.{AuctionRepository, BidRepository, JobsRepository, UserRepository}
 
 import scala.concurrent.ExecutionContextExecutor
@@ -30,9 +30,10 @@ case object ActorsModule extends AbstractModule {
     @Named("auctionRepository") auctionRepository: AuctionRepository,
     @Named("bidRepository") bidRepository: BidRepository,
     @Named("jobsRepository") jobsRepository: JobsRepository,
-    @Named("callbackActorRef") callbackActor: ActorRef
+    @Named("callbackActorRef") callbackActor: ActorRef,
+    @Named("databaseActorRef") databaseActor: ActorRef
   ): ActorRef = system.actorOf(
-    Props(new AuctionActor(auctionRepository, bidRepository, jobsRepository, callbackActor, system)), "auctionActor"
+    Props(new AuctionActor(callbackActor, databaseActor, system)), "auctionActor"
   )
 
   @Provides
@@ -69,5 +70,28 @@ case object ActorsModule extends AbstractModule {
         auctionActor = auctionActor
       )
     ), "routerActor"
+  )
+
+  @Provides
+  @Singleton
+  @Named("databaseActorRef")
+  def databaseActorRef(
+    @Named("userRepository") userRepository: UserRepository,
+    @Named("auctionRepository") auctionRepository: AuctionRepository,
+    @Named("bidRepository") bidRepository: BidRepository,
+    @Named("jobsRepository") jobsRepository: JobsRepository,
+    @Named("actorSystem") system: ActorSystem,
+    @Named("executionContext") executionContextExecutor: ExecutionContextExecutor
+  ): ActorRef = system.actorOf(
+    Props(
+      new DatabaseActor(
+        userRepository = userRepository,
+        auctionRepository = auctionRepository,
+        bidRepository = bidRepository,
+        jobsRepository = jobsRepository,
+        system = system,
+        executionContext = executionContextExecutor
+      )
+    )
   )
 }
