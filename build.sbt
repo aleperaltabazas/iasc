@@ -18,10 +18,11 @@ libraryDependencies ++= Seq(
 
   "de.heikoseeberger" %% "akka-http-circe" % "1.31.0",
 
+  "com.typesafe.akka" %% "akka-actor" % "2.6.3",
   "com.typesafe.akka" %% "akka-http" % "10.1.12",
-  "com.typesafe.akka" %% "akka-stream" % "2.5.26",
+  "com.typesafe.akka" %% "akka-stream" % "2.6.3",
   "com.typesafe.akka" %% "akka-http-spray-json" % "10.1.12",
-  "com.typesafe.akka" %% "akka-cluster-sharding" % "2.5.26",
+  "com.typesafe.akka" %% "akka-cluster-sharding" % "2.6.3",
 
   "org.slf4j" % "slf4j-api" % vSlf4J,
   "ch.qos.logback" % "logback-classic" % vLogback,

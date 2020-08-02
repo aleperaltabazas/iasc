@@ -13,14 +13,13 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 
 class BidService(
-  private val auctionActor: ActorRef,
-  private val usersActor: ActorRef,
+  private val routerActor: ActorRef,
   private implicit val executionContext: ExecutionContext
 ) {
   private implicit val findTimeout: Timeout = 10 seconds
 
   def place(bidDTO: PlaceBidDTO, auctionId: String, bidId: String): Future[Unit] = {
-    usersActor.ask(FindFirstByUsername(bidDTO.buyer)).mapTo[Option[Buyer]]
+    routerActor.ask(FindFirstByUsername(bidDTO.buyer)).mapTo[Option[Buyer]]
       .map(maybeBuyer => maybeBuyer.getOrElse(throw new NotFoundException(s"User ${bidDTO.buyer} not found")))
       .map {
         b =>
@@ -29,7 +28,7 @@ class BidService(
             bidDTO.offer,
             buyer = b
           )
-          auctionActor ! PlaceBid(bid, auctionId)
+          routerActor ! PlaceBid(bid, auctionId)
       }
   }
 }

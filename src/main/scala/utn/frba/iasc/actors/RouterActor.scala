@@ -1,20 +1,22 @@
 package utn.frba.iasc.actors
 
-import akka.actor.{Actor, ActorRef}
+import akka.actor.{Actor, ActorRef, ActorSystem}
 import akka.pattern.ask
 import akka.util.Timeout
 import utn.frba.iasc.extensions.Kotlin
 import utn.frba.iasc.model.{Auction, Buyer}
 
+import scala.collection.mutable
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
 class RouterActor(
-  private val babylons: List[ActorRef],
+  private val system: ActorSystem,
   private implicit val executionContext: ExecutionContext
 ) extends Actor with Kotlin {
   private implicit val timeout: Timeout = Timeout(5 seconds)
+  private val babylons: mutable.Seq[ActorRef] = mutable.Seq.empty
 
   override def receive: Receive = {
     case c@CreateAuction(auction, _) => select(auction.id) ! c
@@ -33,5 +35,5 @@ class RouterActor(
       .foreach(b => context.sender().tell(b, self))
   }
 
-  private def select(str: String): ActorRef = str.last.let { it => babylons(it.intValue() % babylons.length) }
+  private def select(str: String): ActorRef = str.last.let { it => babylons(it.toInt % babylons.length) }
 }

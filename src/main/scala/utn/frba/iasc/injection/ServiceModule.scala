@@ -12,12 +12,10 @@ object ServiceModule extends AbstractModule {
   @Singleton
   @Named("auctionService")
   def auctionService(
-    @Named("auctionActorRef") auctionActor: ActorRef,
-    @Named("usersActorRef") usersActor: ActorRef,
+    @Named("routerActorRef") routerActor: ActorRef,
     @Named("executionContext") executionContext: ExecutionContextExecutor
   ): AuctionService = new AuctionService(
-    auctionActor = auctionActor,
-    usersActor = usersActor,
+    babylonActor = routerActor,
     executionContext = executionContext
   )
 
@@ -28,7 +26,7 @@ object ServiceModule extends AbstractModule {
     @Named("usersActorRef") usersActor: ActorRef,
     @Named("actorSystem") system: ActorSystem
   ): UserService = new UserService(
-    usersActor = usersActor,
+    babylonActor = usersActor,
     executionContext = system.dispatcher
   )
 
@@ -36,12 +34,10 @@ object ServiceModule extends AbstractModule {
   @Singleton
   @Named("bidService")
   def bidService(
-    @Named("auctionActorRef") auctionActorRef: ActorRef,
-    @Named("usersActorRef") usersActor: ActorRef,
+    @Named("routerActorRef") routerActor: ActorRef,
     @Named("executionContext") executionContextExecutor: ExecutionContextExecutor
   ): BidService = new BidService(
-    auctionActor = auctionActorRef,
-    usersActor = usersActor,
+    routerActor = routerActor,
     executionContext = executionContextExecutor
   )
 }

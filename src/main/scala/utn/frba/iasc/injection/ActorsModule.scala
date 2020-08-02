@@ -4,7 +4,7 @@ import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.stream.ActorMaterializer
 import com.google.inject.name.Named
 import com.google.inject.{AbstractModule, Provides, Singleton}
-import utn.frba.iasc.actors.{AuctionActor, CallbackActor, UsersActor}
+import utn.frba.iasc.actors.{AuctionActor, CallbackActor, RouterActor, UsersActor}
 import utn.frba.iasc.db.{AuctionRepository, BidRepository, JobsRepository, UserRepository}
 
 import scala.concurrent.ExecutionContextExecutor
@@ -51,4 +51,14 @@ case object ActorsModule extends AbstractModule {
     @Named("usersActorRef") usersActor: ActorRef,
     @Named("executionContext") executionContext: ExecutionContextExecutor
   ): ActorRef = system.actorOf(Props(new CallbackActor(usersActor, executionContext)), "callbackActor")
+
+  @Provides
+  @Singleton
+  @Named("routerActorRef")
+  def routerActor(
+    @Named("actorSystem") system: ActorSystem,
+    @Named("executionContext") executionContextExecutor: ExecutionContextExecutor
+  ): ActorRef = system.actorOf(
+    Props(new RouterActor(system = system, executionContext = executionContextExecutor)), "routerActor"
+  )
 }

@@ -18,7 +18,7 @@ class BabylonActor(
   private implicit val timeout: Timeout = Timeout(5 seconds)
 
   override def receive: Receive = {
-    case c@CreateAuction(a, _) => auctionActor ! c
+    case c@CreateAuction(_, _) => auctionActor ! c
     case c@CloseAuction(_) => auctionActor ! c
     case p@PlaceBid(_, _) => auctionActor ! p
     case c@CancelAuction(_) => auctionActor ! c
