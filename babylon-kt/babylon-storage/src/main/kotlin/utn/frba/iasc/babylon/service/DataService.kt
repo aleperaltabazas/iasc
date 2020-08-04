@@ -1,12 +1,15 @@
 package utn.frba.iasc.babylon.service
 
 import akka.actor.ActorRef
-import utn.frba.iasc.babylon.actor.PlaceBid
-import utn.frba.iasc.babylon.actor.UpdateStatus
+import akka.pattern.Patterns
+import utn.frba.iasc.babylon.actor.*
 import utn.frba.iasc.babylon.dto.CreateAuctionDTO
 import utn.frba.iasc.babylon.dto.CreateBuyerDTO
 import utn.frba.iasc.babylon.dto.PlaceBidDTO
 import utn.frba.iasc.babylon.dto.UpdateStatusDTO
+import utn.frba.iasc.babylon.model.Auction
+import java.time.Duration
+import java.util.concurrent.TimeUnit
 
 
 class DataService(
@@ -27,4 +30,13 @@ class DataService(
     fun updateStatus(updateStatus: UpdateStatusDTO, id: String){
         replicaSet.tell(UpdateStatus(updateStatus, id), ActorRef.noSender())
     }
+
+    fun find(id: String): Auction = Patterns.ask(replicaSet, Any, Duration.ofSeconds(2)).toCompletableFuture()
+        .get(2, TimeUnit.SECONDS)
+        .let { result ->
+            when (result) {
+                is Client -> result.client.find(id)
+                else -> throw RuntimeException("Failed to get neighbour hosts")
+            }
+        }
 }

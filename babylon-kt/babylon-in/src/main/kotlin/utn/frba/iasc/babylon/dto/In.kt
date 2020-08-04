@@ -8,7 +8,8 @@ data class InCreateAuctionDTO(
     val seller: String,
     val tags: List<String>,
     val basePrice: Int,
-    val article: String
+    val article: String,
+    val timeout: Int
 )
 
 data class AuctionCreatedDTO(

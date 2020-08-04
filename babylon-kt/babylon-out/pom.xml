@@ -220,7 +220,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>utn.frba.iasc.babylon.BabylonStorageKt</mainClass>
+                                    <mainClass>utn.frba.iasc.babylon.BabylonOutKt</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>

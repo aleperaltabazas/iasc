@@ -2,7 +2,6 @@ package utn.frba.iasc.babylon.model
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import utn.frba.iasc.babylon.dto.*
 import java.time.LocalDateTime
 
 data class Auction(
@@ -35,19 +34,14 @@ data class Auction(
     JsonSubTypes.Type(value = Open::class, name = "OPEN")
 )
 sealed class AuctionStatus(val status: String) {
-    abstract fun toDTO(): StatusDTO
-
     fun canBid(): Boolean = this == Open
 
     abstract fun closed(date: LocalDateTime, bids: List<Bid>, basePrice: Int): AuctionStatus
 
     abstract fun cancel(date: LocalDateTime): AuctionStatus
-
 }
 
 object Open : AuctionStatus("OPEN") {
-    override fun toDTO(): StatusDTO = OpenDTO
-
     override fun closed(date: LocalDateTime, bids: List<Bid>, basePrice: Int): AuctionStatus =
         bids.filter { it.offer >= basePrice }
             .maxBy { it.offer }
@@ -65,8 +59,6 @@ object Open : AuctionStatus("OPEN") {
 }
 
 data class Cancelled(val cancelledOn: LocalDateTime) : AuctionStatus("CANCELLED") {
-    override fun toDTO(): StatusDTO = CancelledDTO(cancelledOn)
-
     override fun closed(date: LocalDateTime, bids: List<Bid>, basePrice: Int): AuctionStatus {
         throw IllegalStateException("Can't close a cancelled auction.")
     }
@@ -91,18 +83,9 @@ data class ClosedWithWinner(
     val winner: Buyer,
     val losers: List<Buyer>,
     val finalPrice: Int
-) : Closed() {
-    override fun toDTO(): StatusDTO = ClosedWithWinnerDTO(
-        closedOn,
-        winner.id,
-        losers.map { it.id },
-        finalPrice
-    )
-}
+) : Closed()
 
-data class ClosedUnresolved(val closedOn: LocalDateTime) : Closed() {
-    override fun toDTO(): StatusDTO = ClosedUnresolvedDTO(closedOn)
-}
+data class ClosedUnresolved(val closedOn: LocalDateTime) : Closed()
 
 data class Bid(
     val offer: Int,

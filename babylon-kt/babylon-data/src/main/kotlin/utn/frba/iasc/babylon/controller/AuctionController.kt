@@ -19,6 +19,7 @@ class AuctionController(
         Spark.post("/babylon-data/auctions", "application/json", this::createAuction, objectMapper::writeValueAsString)
         Spark.put("/babylon-data/auctions/:id/bids", "application/json", this::placeBid, objectMapper::writeValueAsString)
         Spark.get("/babylon-data/auctions", "application/json", this::listAuctions, objectMapper::writeValueAsString)
+        Spark.get("/babylon-data/auctions/:id", "application/json", this::find, objectMapper::writeValueAsString)
         Spark.patch("/babylon-data/auctions/:id/status", "application/json", this::updateStatus, objectMapper::writeValueAsString)
     }
 
@@ -37,5 +38,10 @@ class AuctionController(
     private fun updateStatus(req: Request, res: Response) {
         val updateStatus: UpdateStatusDTO = objectMapper.readValue(req.body())
         auctionService.updateStatus(updateStatus, req.params(":id"))
+    }
+
+    private fun find(req: Request, res: Response): Auction {
+        val id = req.params(":id")
+        return auctionService.find(id)
     }
 }

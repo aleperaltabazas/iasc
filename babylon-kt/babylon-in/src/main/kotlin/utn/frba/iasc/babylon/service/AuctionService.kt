@@ -1,5 +1,6 @@
 package utn.frba.iasc.babylon.service
 
+import utn.frba.iasc.babylon.client.BabylonOutClient
 import utn.frba.iasc.babylon.client.BabylonStorageClient
 import utn.frba.iasc.babylon.dto.CancelledDTO
 import utn.frba.iasc.babylon.dto.InCreateAuctionDTO
@@ -9,7 +10,8 @@ import utn.frba.iasc.babylon.util.IdGen
 import java.time.LocalDateTime
 
 class AuctionService(
-    private val babylonStorageClient: BabylonStorageClient
+    private val babylonStorageClient: BabylonStorageClient,
+    private val babylonOutClient: BabylonOutClient
 ) {
     fun create(inCreate: InCreateAuctionDTO): String {
         val id = IdGen.auction()
@@ -23,6 +25,7 @@ class AuctionService(
         )
 
         babylonStorageClient.createAuction(body)
+        babylonOutClient.scheduleClose(id, inCreate.timeout)
 
         return id
     }

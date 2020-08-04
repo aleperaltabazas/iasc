@@ -10,6 +10,10 @@ data class Clients(val clients: List<BabylonDataClient>)
 
 object All
 
+object Any
+
+data class Client(val client: BabylonDataClient)
+
 object HealthCheck
 
 data class PlaceBid(val dto: PlaceBidDTO, val auctionId: String)

@@ -1,11 +1,13 @@
 package utn.frba.iasc.babylon.client
 
+import com.fasterxml.jackson.core.type.TypeReference
 import org.slf4j.LoggerFactory
 import utn.frba.iasc.babylon.connector.Connector
 import utn.frba.iasc.babylon.dto.CreateAuctionDTO
 import utn.frba.iasc.babylon.dto.CreateBuyerDTO
 import utn.frba.iasc.babylon.dto.PlaceBidDTO
 import utn.frba.iasc.babylon.dto.UpdateStatusDTO
+import utn.frba.iasc.babylon.model.Auction
 
 class BabylonDataClient(
     private val babylonDataConnector: Connector
@@ -39,6 +41,13 @@ class BabylonDataClient(
     fun updateStatus(update: UpdateStatusDTO, id: String) {
         val response = babylonDataConnector.patch("/babylon-data/auctions/$id/status", update)
         LOGGER.info(response.body)
+    }
+
+    fun find(id: String): Auction {
+        val response = babylonDataConnector.get("/babylon-data/auctions/$id")
+        LOGGER.info(response.body)
+
+        return response.deserializeAs(object : TypeReference<Auction>() {})
     }
 
     companion object {

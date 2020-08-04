@@ -9,6 +9,7 @@ import utn.frba.iasc.babylon.dto.CreateAuctionDTO
 import utn.frba.iasc.babylon.dto.CreateBuyerDTO
 import utn.frba.iasc.babylon.dto.PlaceBidDTO
 import utn.frba.iasc.babylon.dto.UpdateStatusDTO
+import utn.frba.iasc.babylon.model.Auction
 import utn.frba.iasc.babylon.service.DataService
 
 class DataController(
@@ -40,7 +41,12 @@ class DataController(
             this::updateStatus,
             objectMapper::writeValueAsString
         )
-
+        Spark.get(
+            "/babylon-storage/auctions/:id",
+            "application/json",
+            this::find,
+            objectMapper::writeValueAsString
+        )
     }
 
     private fun createAuction(req: Request, res: Response) {
@@ -61,5 +67,10 @@ class DataController(
     private fun updateStatus(req: Request, res: Response) {
         val updateStatus: UpdateStatusDTO = objectMapper.readValue(req.body())
         dataService.updateStatus(updateStatus, req.params(":id"))
+    }
+
+    private fun find(req: Request, res: Response): Auction {
+        val id = req.params(":id")
+        return dataService.find(id)
     }
 }

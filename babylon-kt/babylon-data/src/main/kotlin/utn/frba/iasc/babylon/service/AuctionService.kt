@@ -53,4 +53,6 @@ class AuctionService(
         val auction = auctionStorage.findOrThrow(auctionId)
         auctionStorage.update(auction.copy(status = status))
     }
+
+    fun find(id: String): Auction = auctionStorage.find(id) ?: throw NotFoundException("Auction $id not found")
 }

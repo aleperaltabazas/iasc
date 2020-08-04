@@ -12,8 +12,16 @@ object ConnectionModule : AbstractModule() {
     @Provides
     @Singleton
     @Named("storageConnector")
-    fun storageClient(
+    fun storageConnector(
         config: Config,
         @Named("objectMapper") objectMapper: ObjectMapper
     )  = Connector.create(objectMapper, config.getConfig("storage"))
+
+    @Provides
+    @Singleton
+    @Named("outConnector")
+    fun outConnector(
+        config: Config,
+        @Named("objectMapper") objectMapper: ObjectMapper
+    ) = Connector.create(objectMapper, config.getConfig("out"))
 }

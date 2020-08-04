@@ -37,6 +37,7 @@ class ReplicaSet(
             .match(PlaceBid::class.java) { placeBid(it.dto, it.auctionId) }
             .match(CreateBuyerDTO::class.java) { createBuyer(it) }
             .match(UpdateStatus::class.java) { updateStatus(it) }
+            .match(Any::class.java) { context.sender.tell(Client(babylonDataClients.random()), self) }
             .build()
     }
 
@@ -66,6 +67,10 @@ class ReplicaSet(
     private fun updateStatus(updateStatus: UpdateStatus) {
         val (update, id) = updateStatus
         babylonDataClients.forEach { it.updateStatus(update, id) }
+    }
+
+    private fun anyClient() {
+
     }
 
     companion object {
