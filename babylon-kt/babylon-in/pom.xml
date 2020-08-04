@@ -122,12 +122,6 @@
             <artifactId>logback-classic</artifactId>
             <version>1.2.3</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.despegar.library</groupId>
-            <artifactId>logging</artifactId>
-            <version>0.1.0</version>
-        </dependency>
         <!-- Logging -->
 
         <!-- Arrow -->
@@ -209,35 +203,6 @@
                     <remoteTagging>true</remoteTagging>
                     <tagNameFormat>@{project.version}</tagNameFormat>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.despegar.deploys</groupId>
-                <artifactId>cloudia-java8-plugin</artifactId>
-                <version>1.0.19</version>
-                <configuration>
-                    <mainClass>utn.frba.iasc.babylon.BabylonIn</mainClass>
-                    <applicationArguments>9290 /</applicationArguments>
-                    <healthCheckPort>9290</healthCheckPort>
-                    <healthCheckURI>/health-check</healthCheckURI>
-                    <statusURI>/manage/status</statusURI>
-                    <healthCheckTimeout>200</healthCheckTimeout>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>generate-tar</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>tar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.newrelic.agent.java</groupId>
-                        <artifactId>newrelic-agent</artifactId>
-                        <version>${newrelic.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
