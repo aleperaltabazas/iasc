@@ -26,7 +26,6 @@ data class PlaceBidDTO(
     val offer: Int
 )
 
-
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
     property = "type",

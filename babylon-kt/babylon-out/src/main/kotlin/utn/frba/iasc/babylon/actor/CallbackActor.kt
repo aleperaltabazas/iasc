@@ -5,6 +5,7 @@ import akka.japi.pf.ReceiveBuilder
 import org.slf4j.LoggerFactory
 import utn.frba.iasc.babylon.client.BabylonStorageClient
 import java.time.Duration
+import java.time.LocalDateTime
 
 class CallbackActor(
     private val babylonStorageClient: BabylonStorageClient
@@ -28,7 +29,11 @@ class CallbackActor(
 
     private fun close(auctionId: String) {
         LOGGER.info("Close $auctionId")
-        babylonStorageClient.close(auctionId)
+        val auction = babylonStorageClient.find(auctionId)
+
+        val status = auction.closed(LocalDateTime.now()).status
+
+        babylonStorageClient.update(auction.closed(LocalDateTime.now()).status.toDTO(), auctionId)
     }
 
     companion object {
