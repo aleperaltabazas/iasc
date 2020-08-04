@@ -2,6 +2,7 @@ package utn.frba.iasc.babylon.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import org.slf4j.LoggerFactory
 import spark.Request
 import spark.Response
 import spark.Spark
@@ -23,4 +24,8 @@ class BuyerController(
     }
 
     private fun listBuyers(req: Request, res: Response) = buyerService.listBuyers()
+
+    companion object {
+        private val LOGGER = LoggerFactory.getLogger(BuyerController::class.java)
+    }
 }

@@ -7,6 +7,7 @@ import spark.Response
 import spark.Spark
 import utn.frba.iasc.babylon.dto.CreateAuctionDTO
 import utn.frba.iasc.babylon.dto.PlaceBidDTO
+import utn.frba.iasc.babylon.dto.UpdateStatusDTO
 import utn.frba.iasc.babylon.model.Auction
 import utn.frba.iasc.babylon.service.AuctionService
 
@@ -18,6 +19,7 @@ class AuctionController(
         Spark.post("/babylon-data/auctions", "application/json", this::createAuction, objectMapper::writeValueAsString)
         Spark.put("/babylon-data/auctions/:id/bids", "application/json", this::placeBid, objectMapper::writeValueAsString)
         Spark.get("/babylon-data/auctions", "application/json", this::listAuctions, objectMapper::writeValueAsString)
+        Spark.patch("/babylon-data/auctions/:id/status", "application/json", this::updateStatus, objectMapper::writeValueAsString)
     }
 
     private fun createAuction(req: Request, res: Response) {
@@ -31,4 +33,9 @@ class AuctionController(
     }
 
     private fun listAuctions(req: Request, res: Response): List<Auction> = auctionService.listAuctions()
+
+    private fun updateStatus(req: Request, res: Response) {
+        val updateStatus: UpdateStatusDTO = objectMapper.readValue(req.body())
+        auctionService.updateStatus(updateStatus, req.params(":id"))
+    }
 }

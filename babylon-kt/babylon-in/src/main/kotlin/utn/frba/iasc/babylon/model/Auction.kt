@@ -1,8 +1,5 @@
 package utn.frba.iasc.babylon.model
 
-import utn.frba.iasc.babylon.dto.CancelledDTO
-import utn.frba.iasc.babylon.dto.ClosedWithWinnerDTO
-import utn.frba.iasc.babylon.dto.UpdateStatusDTO
 import java.time.LocalDateTime
 
 data class Auction(

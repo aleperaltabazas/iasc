@@ -10,10 +10,12 @@ object LoggingFilter {
     private val LOGGER = LoggerFactory.getLogger(LoggingFilter::class.java)
 
     fun register() {
-        Spark.before("/babylon-data/auction*", this::before)
-        Spark.after("/babylon-data/auction*")
-        Spark.before("/babylon-data/buyer*", this::before)
-        Spark.after("/babylon-data/buyer*")
+        Spark.before("/babylon-data/auctions", this::before)
+        Spark.after("/babylon-data/auctions", this::after)
+        Spark.before("/babylon-data/auctions/*/bids", this::before)
+        Spark.after("/babylon-data/auctions/*/bids", this::after)
+        Spark.before("/babylon-data/buyers", this::before)
+        Spark.after("/babylon-data/buyers", this::after)
     }
 
     private fun before(req: Request, res: Response) {

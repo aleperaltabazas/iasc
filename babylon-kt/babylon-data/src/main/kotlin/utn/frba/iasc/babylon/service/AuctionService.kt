@@ -1,11 +1,8 @@
 package utn.frba.iasc.babylon.service
 
-import utn.frba.iasc.babylon.dto.CreateAuctionDTO
-import utn.frba.iasc.babylon.dto.PlaceBidDTO
+import utn.frba.iasc.babylon.dto.*
 import utn.frba.iasc.babylon.exception.NotFoundException
-import utn.frba.iasc.babylon.model.Auction
-import utn.frba.iasc.babylon.model.Bid
-import utn.frba.iasc.babylon.model.Open
+import utn.frba.iasc.babylon.model.*
 import utn.frba.iasc.babylon.storage.AuctionStorage
 import utn.frba.iasc.babylon.storage.BuyerStorage
 
@@ -40,4 +37,20 @@ class AuctionService(
     }
 
     fun listAuctions(): List<Auction> = auctionStorage.findAll()
+
+    fun updateStatus(updateStatus: UpdateStatusDTO, auctionId: String) {
+        val status = when (updateStatus) {
+            is CancelledDTO -> Cancelled(updateStatus.cancelledOn)
+            is ClosedWithWinnerDTO -> ClosedWithWinner(
+                closedOn = updateStatus.closedOn,
+                finalPrice = updateStatus.finalPrice,
+                losers = updateStatus.losersId.map { buyerStorage.findOrThrow(it) },
+                winner = buyerStorage.findOrThrow(updateStatus.winnerId)
+            )
+            is ClosedUnresolvedDTO -> ClosedUnresolved(updateStatus.closedOn)
+        }
+
+        val auction = auctionStorage.findOrThrow(auctionId)
+        auctionStorage.update(auction.copy(status = status))
+    }
 }
