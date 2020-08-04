@@ -2,8 +2,8 @@ package utn.frba.iasc.babylon.storage
 
 import utn.frba.iasc.babylon.model.Entity
 
-class Storage<T : Entity>(
-    private val ts: MutableList<T>
+abstract class Storage<T : Entity>(
+    private val ts: MutableList<T> = mutableListOf()
 ) {
     fun add(t: T) = ts.add(t)
 
