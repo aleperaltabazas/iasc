@@ -9,7 +9,7 @@ class BuyerService(
 ) {
     fun createBuyer(createBuyer: CreateBuyerDTO) {
         val buyer = Buyer(
-            id = createBuyer.id,
+            id = createBuyer.buyerId,
             username = createBuyer.username,
             ip = createBuyer.ip,
             interestTags = createBuyer.interestTags

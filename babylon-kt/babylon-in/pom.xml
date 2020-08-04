@@ -177,6 +177,22 @@
             <version>9.4.10.v20180503</version>
         </dependency>
         <!-- Jetty -->
+
+        <!-- Typesafe Config -->
+        <dependency>
+            <groupId>com.typesafe</groupId>
+            <artifactId>config</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+        <!-- Typesafe Config -->
+
+        <!-- Akka -->
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-actor_2.13</artifactId>
+            <version>2.6.8</version>
+        </dependency>
+        <!-- Akka -->
     </dependencies>
 
     <build>
@@ -204,7 +220,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>utn.frba.iasc.babylon.BabylonStorageKt</mainClass>
+                                    <mainClass>utn.frba.iasc.babylon.BabylonInKt</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
