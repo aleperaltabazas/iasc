@@ -17,6 +17,7 @@ class AuctionController(
     override fun register() {
         Spark.post("/babylon-in/auctions", "application/json", this::createAuction, objectMapper::writeValueAsString)
         Spark.put("/babylon-in/auctions/:id/bids", "application/json", this::placeBid, objectMapper::writeValueAsString)
+        Spark.post("/babylon-in/auctions/:id/cancel", "application/json", this::cancel, objectMapper::writeValueAsString)
     }
 
     private fun createAuction(req: Request, res: Response): AuctionCreatedDTO {
@@ -29,5 +30,9 @@ class AuctionController(
     private fun placeBid(req: Request, res: Response) {
         val placeBid: PlaceBidDTO = objectMapper.readValue(req.body())
         auctionService.placeBid(placeBid, req.params(":id"))
+    }
+
+    private fun cancel(req: Request, res: Response) {
+        auctionService.cancel(req.params(":id"))
     }
 }

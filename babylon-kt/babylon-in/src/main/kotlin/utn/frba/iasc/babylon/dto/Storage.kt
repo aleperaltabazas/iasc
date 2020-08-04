@@ -14,3 +14,4 @@ data class StorageCreateBuyerDTO(
     val ip: String,
     val interestTags: List<String>
 )
+
