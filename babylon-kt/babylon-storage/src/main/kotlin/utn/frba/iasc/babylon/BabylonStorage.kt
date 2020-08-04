@@ -20,10 +20,10 @@ fun main(args: Array<String>) {
     BabylonStorage().run(args)
 }
 
+var nodes = emptyList<String>()
+
 class BabylonStorage {
     companion object {
-        private const val JMX_PORT = 29290
-        private const val JMX_LOCALHOST = "127.0.0.1"
         private const val CONTEXT_PATH = "/"
         private val LOGGER = LoggerFactory.getLogger(BabylonStorage::class.java)
     }
@@ -32,6 +32,7 @@ class BabylonStorage {
         LOGGER.info("Args passed: ${args.joinToString(", ")}")
         val port = parsePort(args) ?: 9290
         LOGGER.info("Using port $port.")
+        nodes = parseNodes(args) ?: emptyList()
 
         val handler = ServletContextHandler()
         handler.contextPath = CONTEXT_PATH
@@ -60,10 +61,15 @@ class BabylonStorage {
     private fun parsePort(args: Array<String>) =
         args.toList().find { it.matches("--port=\\d+".toRegex()) }?.drop("--port=")?.toInt()
 
+    private fun parseNodes(args: Array<String>) =
+        args.toList().find { it.matches("--nodes=(\\w|,)+".toRegex()) }
+            ?.drop("--nodes=")
+            ?.split(",")
+
     class App : SparkApplication {
         override fun init() {
             val injector = Guice.createInjector(
-                ActorsModule,
+                ActorsModule(nodes),
                 ControllerModule,
                 ObjectMapperModule,
                 ServiceModule

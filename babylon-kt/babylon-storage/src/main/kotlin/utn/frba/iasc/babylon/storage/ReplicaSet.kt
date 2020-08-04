@@ -15,6 +15,10 @@ import java.time.Duration
 class ReplicaSet(
     private val objectMapper: ObjectMapper
 ) : AbstractActor() {
+    constructor(objectMapper: ObjectMapper, nodes: List<String>) : this(objectMapper) {
+        nodes.forEach(this::add)
+    }
+
     private val babylonDataClients: MutableList<BabylonDataClient> = ArrayList()
 
     init {
@@ -52,6 +56,7 @@ class ReplicaSet(
 
         babylonDataClients.removeIf { it.healthCheck().not() }
     }
+
     private fun createAuction(createAuction: CreateAuctionDTO) {
         babylonDataClients.forEach { it.createAuction(createAuction) }
     }
@@ -67,10 +72,6 @@ class ReplicaSet(
     private fun updateStatus(updateStatus: UpdateStatus) {
         val (update, id) = updateStatus
         babylonDataClients.forEach { it.updateStatus(update, id) }
-    }
-
-    private fun anyClient() {
-
     }
 
     companion object {

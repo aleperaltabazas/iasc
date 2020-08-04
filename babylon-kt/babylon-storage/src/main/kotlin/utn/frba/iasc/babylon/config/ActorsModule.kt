@@ -10,13 +10,13 @@ import com.google.inject.Singleton
 import com.google.inject.name.Named
 import utn.frba.iasc.babylon.storage.ReplicaSet
 
-object ActorsModule : AbstractModule() {
+class ActorsModule(private val nodes: List<String>) : AbstractModule() {
     @Provides
     @Singleton
     @Named("replicaSetProps")
     fun replicaSetProps(
         @Named("objectMapper") objectMapper: ObjectMapper
-    ): Props = Props.create(ReplicaSet::class.java) { ReplicaSet(objectMapper) }
+    ): Props = Props.create(ReplicaSet::class.java) { ReplicaSet(objectMapper, this.nodes) }
 
     @Provides
     @Singleton
