@@ -36,6 +36,7 @@ class ReplicaSet(
             .match(CreateAuctionDTO::class.java) { createAuction(it) }
             .match(PlaceBid::class.java) { placeBid(it.dto, it.auctionId) }
             .match(CreateBuyerDTO::class.java) { createBuyer(it) }
+            .match(UpdateStatus::class.java) { updateStatus(it) }
             .build()
     }
 
@@ -44,12 +45,12 @@ class ReplicaSet(
         val client = BabylonDataClient(connector)
         this.babylonDataClients.add(client)
     }
+
     private fun healthCheck() {
         LOGGER.info("Running health check...")
 
         babylonDataClients.removeIf { it.healthCheck().not() }
     }
-
     private fun createAuction(createAuction: CreateAuctionDTO) {
         babylonDataClients.forEach { it.createAuction(createAuction) }
     }
@@ -60,6 +61,11 @@ class ReplicaSet(
 
     private fun createBuyer(create: CreateBuyerDTO) {
         babylonDataClients.forEach { it.createBuyer(create) }
+    }
+
+    private fun updateStatus(updateStatus: UpdateStatus) {
+        val (update, id) = updateStatus
+        babylonDataClients.forEach { it.updateStatus(update, id) }
     }
 
     companion object {

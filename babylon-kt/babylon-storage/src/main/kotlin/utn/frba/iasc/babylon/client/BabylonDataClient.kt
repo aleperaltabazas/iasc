@@ -5,6 +5,7 @@ import utn.frba.iasc.babylon.connector.Connector
 import utn.frba.iasc.babylon.dto.CreateAuctionDTO
 import utn.frba.iasc.babylon.dto.CreateBuyerDTO
 import utn.frba.iasc.babylon.dto.PlaceBidDTO
+import utn.frba.iasc.babylon.dto.UpdateStatusDTO
 
 class BabylonDataClient(
     private val babylonDataConnector: Connector
@@ -32,6 +33,11 @@ class BabylonDataClient(
 
     fun createBuyer(create: CreateBuyerDTO) {
         val response = babylonDataConnector.post("/babylon-data/buyers", create)
+        LOGGER.info(response.body)
+    }
+
+    fun updateStatus(update: UpdateStatusDTO, id: String) {
+        val response = babylonDataConnector.post("/babylon-data/auctions/$id/bids", update)
         LOGGER.info(response.body)
     }
 
