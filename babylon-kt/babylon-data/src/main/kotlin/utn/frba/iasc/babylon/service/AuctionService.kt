@@ -8,7 +8,6 @@ import utn.frba.iasc.babylon.model.Bid
 import utn.frba.iasc.babylon.model.Open
 import utn.frba.iasc.babylon.storage.AuctionStorage
 import utn.frba.iasc.babylon.storage.BuyerStorage
-import utn.frba.iasc.babylon.util.IdGen
 
 class AuctionService(
     private val auctionStorage: AuctionStorage,

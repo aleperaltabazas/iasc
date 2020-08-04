@@ -8,6 +8,7 @@ import utn.frba.iasc.babylon.actor.*
 import utn.frba.iasc.babylon.client.BabylonDataClient
 import utn.frba.iasc.babylon.connector.Connector
 import utn.frba.iasc.babylon.dto.CreateAuctionDTO
+import utn.frba.iasc.babylon.dto.CreateBuyerDTO
 import utn.frba.iasc.babylon.dto.PlaceBidDTO
 import java.time.Duration
 
@@ -34,6 +35,7 @@ class ReplicaSet(
             .match(HealthCheck::class.java) { healthCheck() }
             .match(CreateAuctionDTO::class.java) { createAuction(it) }
             .match(PlaceBid::class.java) { placeBid(it.dto, it.auctionId) }
+            .match(CreateBuyerDTO::class.java) { createBuyer(it) }
             .build()
     }
 
@@ -41,20 +43,7 @@ class ReplicaSet(
         val connector = Connector.create(objectMapper, host, ttl = 2)
         val client = BabylonDataClient(connector)
         this.babylonDataClients.add(client)
-
-//        context.system.scheduler.scheduleOnce(
-//            Duration.ofMillis(5000),
-//            self,
-//            HealthCheck,
-//            context.system.dispatcher,
-//            ActorRef.noSender()
-//        )
     }
-
-    private fun remove(host: String) {
-        this.babylonDataClients.removeIf { it.host() == host }
-    }
-
     private fun healthCheck() {
         LOGGER.info("Running health check...")
 
@@ -67,6 +56,10 @@ class ReplicaSet(
 
     private fun placeBid(placeBid: PlaceBidDTO, auctionId: String) {
         babylonDataClients.forEach { it.placeBid(placeBid, auctionId) }
+    }
+
+    private fun createBuyer(create: CreateBuyerDTO) {
+        babylonDataClients.forEach { it.createBuyer(create) }
     }
 
     companion object {

@@ -6,6 +6,7 @@ import spark.Request
 import spark.Response
 import spark.Spark
 import utn.frba.iasc.babylon.dto.CreateAuctionDTO
+import utn.frba.iasc.babylon.dto.CreateBuyerDTO
 import utn.frba.iasc.babylon.dto.PlaceBidDTO
 import utn.frba.iasc.babylon.service.DataService
 
@@ -14,10 +15,24 @@ class DataController(
     private val dataService: DataService
 ) : Controller {
     override fun register() {
-        Spark.post("/babylon-storage/auctions", "application/json", this::createAuction,
-            objectMapper::writeValueAsString)
-        Spark.put("/babylon-storage/auctions/:id/bids", "application/json", this::placeBid,
-            objectMapper::writeValueAsString)
+        Spark.post(
+            "/babylon-storage/auctions",
+            "application/json",
+            this::createAuction,
+            objectMapper::writeValueAsString
+        )
+        Spark.put(
+            "/babylon-storage/auctions/:id/bids",
+            "application/json",
+            this::placeBid,
+            objectMapper::writeValueAsString
+        )
+        Spark.post(
+            "/babylon-storage/buyers",
+            "application/json",
+            this::createBuyer,
+            objectMapper::writeValueAsString
+        )
     }
 
     private fun createAuction(req: Request, res: Response) {
@@ -28,5 +43,10 @@ class DataController(
     private fun placeBid(req: Request, res: Response) {
         val placeBid: PlaceBidDTO = objectMapper.readValue(req.body())
         dataService.placeBid(placeBid, req.params(":id"))
+    }
+
+    private fun createBuyer(req: Request, res: Response) {
+        val createBuyer: CreateBuyerDTO = objectMapper.readValue(req.body())
+        dataService.createBuyer(createBuyer)
     }
 }

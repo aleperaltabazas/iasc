@@ -14,6 +14,7 @@ data class PlaceBidDTO(
 )
 
 data class CreateBuyerDTO(
+    val id: String,
     val username: String,
     val ip: String,
     val interestTags: List<String>
