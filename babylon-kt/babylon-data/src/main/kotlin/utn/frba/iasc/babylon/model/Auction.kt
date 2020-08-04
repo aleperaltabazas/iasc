@@ -73,3 +73,8 @@ data class ClosedWithWinner(
 ) : Closed()
 
 data class ClosedUnresolved(val closedOn: LocalDateTime) : Closed()
+
+data class Bid(
+    val offer: Int,
+    val buyer: Buyer
+)

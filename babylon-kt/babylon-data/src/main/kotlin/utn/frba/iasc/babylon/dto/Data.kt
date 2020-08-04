@@ -6,3 +6,8 @@ data class CreateAuctionDTO(
     val basePrice: Int,
     val article: String
 )
+
+data class PlaceBidDTO(
+    val buyer: String,
+    val offer: Int
+)

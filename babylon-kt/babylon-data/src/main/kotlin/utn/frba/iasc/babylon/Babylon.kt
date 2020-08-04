@@ -22,8 +22,6 @@ fun main(args: Array<String>) {
 
 class BabylonData {
     companion object {
-        private const val JMX_PORT = 29290
-        private const val JMX_LOCALHOST = "127.0.0.1"
         private const val CONTEXT_PATH = "/"
         private val LOGGER = LoggerFactory.getLogger(BabylonData::class.java)
     }
