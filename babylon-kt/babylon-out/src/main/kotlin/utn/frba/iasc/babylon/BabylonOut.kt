@@ -7,6 +7,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler
 import org.slf4j.LoggerFactory
 import spark.servlet.SparkApplication
 import spark.servlet.SparkFilter
+import utn.frba.iasc.babylon.config.*
 import utn.frba.iasc.babylon.controller.Controller
 import utn.frba.iasc.babylon.extension.drop
 import utn.frba.iasc.babylon.util.LoggingFilter
@@ -59,7 +60,13 @@ class BabylonOut {
     class App : SparkApplication {
         override fun init() {
             val injector = Guice.createInjector(
-
+                ActorsModule,
+                ClientModule,
+                ConfigModule,
+                ConnectionModule,
+                ControllerModule,
+                ObjectMapperModule,
+                ServiceModule
             )
 
             injector.allBindings.keys
