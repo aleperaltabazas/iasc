@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>babylon-out</artifactId>
+    <artifactId>babylon-storage</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -215,7 +215,7 @@
                 <artifactId>cloudia-java8-plugin</artifactId>
                 <version>1.0.19</version>
                 <configuration>
-                    <mainClass>utn.frba.iasc.babylon.BabylonOut</mainClass>
+                    <mainClass>utn.frba.iasc.babylon.Babylon</mainClass>
                     <applicationArguments>9290 /</applicationArguments>
                     <healthCheckPort>9290</healthCheckPort>
                     <healthCheckURI>/health-check</healthCheckURI>

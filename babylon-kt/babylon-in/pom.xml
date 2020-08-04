@@ -215,7 +215,7 @@
                 <artifactId>cloudia-java8-plugin</artifactId>
                 <version>1.0.19</version>
                 <configuration>
-                    <mainClass>utn.frba.iasc.babylon.Babylon</mainClass>
+                    <mainClass>utn.frba.iasc.babylon.BabylonIn</mainClass>
                     <applicationArguments>9290 /</applicationArguments>
                     <healthCheckPort>9290</healthCheckPort>
                     <healthCheckURI>/health-check</healthCheckURI>
