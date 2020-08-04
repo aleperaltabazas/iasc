@@ -15,6 +15,8 @@ data class Auction(
 ) : Entity(id) {
     fun isOpen(): Boolean = status == Open
 
+    fun isCancelled(): Boolean = status is Cancelled
+
     fun closed(date: LocalDateTime): Auction = copy(status = status.closed(date, bids, basePrice))
 
     fun placeBid(bid: Bid): Auction = if (status.canBid()) copy(bids = bids + bid)

@@ -31,9 +31,12 @@ class CallbackActor(
         LOGGER.info("Close $auctionId")
         val auction = babylonStorageClient.find(auctionId)
 
-        val status = auction.closed(LocalDateTime.now()).status
+        if (auction.isCancelled()) {
+            LOGGER.info("Auction $auctionId is already cancelled")
+        } else {
 
-        babylonStorageClient.update(auction.closed(LocalDateTime.now()).status.toDTO(), auctionId)
+            babylonStorageClient.update(auction.closed(LocalDateTime.now()).status.toDTO(), auctionId)
+        }
     }
 
     companion object {
