@@ -7,6 +7,7 @@ import com.google.inject.Singleton
 import com.google.inject.name.Named
 import utn.frba.iasc.babylon.controller.AuctionController
 import utn.frba.iasc.babylon.controller.BuyerController
+import utn.frba.iasc.babylon.controller.HealthCheckController
 import utn.frba.iasc.babylon.service.AuctionService
 import utn.frba.iasc.babylon.service.BuyerService
 
@@ -26,4 +27,9 @@ object ControllerModule : AbstractModule() {
         @Named("buyerService") buyerService: BuyerService,
         @Named("objectMapper") objectMapper: ObjectMapper
     ) = BuyerController(objectMapper, buyerService)
+
+    @Provides
+    @Singleton
+    @Named("healthCheckController")
+    fun healthCheckController() = HealthCheckController()
 }

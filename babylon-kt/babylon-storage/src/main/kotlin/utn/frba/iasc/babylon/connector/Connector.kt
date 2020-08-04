@@ -11,6 +11,7 @@ import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClientBuilder
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.util.concurrent.TimeUnit
 
 open class Connector(
     private val apacheClient: HttpClient,
@@ -92,11 +93,14 @@ open class Connector(
 
         fun create(
             objectMapper: ObjectMapper,
-            host: String
+            host: String,
+            ttl: Long = 5
         ) = Connector(
             objectMapper = objectMapper,
             host = host,
-            apacheClient = HttpClientBuilder.create().build()
+            apacheClient = HttpClientBuilder.create()
+                .setConnectionTimeToLive(ttl, TimeUnit.SECONDS)
+                .build()
         )
     }
 }

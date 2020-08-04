@@ -185,6 +185,14 @@
             <version>1.4.0</version>
         </dependency>
         <!-- Typesafe Config -->
+
+        <!-- Akka -->
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-actor_2.13</artifactId>
+            <version>2.6.8</version>
+        </dependency>
+        <!-- Akka -->
     </dependencies>
 
     <build>

@@ -19,6 +19,14 @@ class BabylonDataClient(
     }
 
     fun host(): String = babylonDataConnector.host
+    fun healthCheck(): Boolean {
+        return try {
+            babylonDataConnector.get("/babylon-data/health-check").isError().not()
+        } catch (e: Exception) {
+            LOGGER.error("Health check failed for ${host()}", e)
+            false
+        }
+    }
 
     companion object {
         private val LOGGER = LoggerFactory.getLogger(BabylonDataClient::class.java)
