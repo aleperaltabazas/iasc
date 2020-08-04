@@ -23,7 +23,9 @@ class BuyerController(
         buyerService.createBuyer(createBuyer)
     }
 
-    private fun listBuyers(req: Request, res: Response) = buyerService.listBuyers()
+    private fun listBuyers(req: Request, res: Response) = buyerService.listBuyers(
+        req.queryParams("tags")?.replace("\\[|\\]".toRegex(), "")?.split(",")
+    )
 
     companion object {
         private val LOGGER = LoggerFactory.getLogger(BuyerController::class.java)

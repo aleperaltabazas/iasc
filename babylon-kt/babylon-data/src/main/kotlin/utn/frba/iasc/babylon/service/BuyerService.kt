@@ -1,5 +1,6 @@
 package utn.frba.iasc.babylon.service
 
+import arrow.core.extensions.set.foldable.nonEmpty
 import utn.frba.iasc.babylon.dto.CreateBuyerDTO
 import utn.frba.iasc.babylon.model.Buyer
 import utn.frba.iasc.babylon.storage.BuyerStorage
@@ -18,5 +19,6 @@ class BuyerService(
         buyerStorage.add(buyer)
     }
 
-    fun listBuyers(): List<Buyer> = buyerStorage.findAll()
+    fun listBuyers(tags: List<String>?): List<Buyer> = if (tags == null) buyerStorage.findAll()
+    else buyerStorage.findAll { it.interestTags.intersect(tags).nonEmpty() }
 }

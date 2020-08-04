@@ -25,7 +25,7 @@ class AuctionService(
         )
 
         babylonStorageClient.createAuction(body)
-        babylonOutClient.scheduleClose(id, inCreate.timeout)
+        babylonOutClient.newAuctionCallback(id, inCreate.timeout, inCreate.tags)
 
         return id
     }

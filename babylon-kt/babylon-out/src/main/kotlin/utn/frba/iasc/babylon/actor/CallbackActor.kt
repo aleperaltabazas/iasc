@@ -13,6 +13,7 @@ class CallbackActor(
     override fun createReceive(): Receive = ReceiveBuilder.create()
         .match(DoClose::class.java) { close(it.id) }
         .match(CloseIn::class.java) { scheduleClose(it.id, it.timeout) }
+        .match(Inform::class.java) { inform(it.auctionId, it.tags) }
         .build()
 
     private fun scheduleClose(auctionId: String, timeout: Int) {
@@ -36,6 +37,13 @@ class CallbackActor(
         } else {
 
             babylonStorageClient.update(auction.closed(LocalDateTime.now()).status.toDTO(), auctionId)
+        }
+    }
+
+    private fun inform(auctionId: String, tags: List<String>) {
+        val buyers = babylonStorageClient.buyersInterestedIn(tags)
+        buyers.forEach {
+            LOGGER.info("Hey, ${it.username} - check out this awesome auction: $auctionId")
         }
     }
 

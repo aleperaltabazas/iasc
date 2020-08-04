@@ -8,6 +8,7 @@ import utn.frba.iasc.babylon.dto.CreateBuyerDTO
 import utn.frba.iasc.babylon.dto.PlaceBidDTO
 import utn.frba.iasc.babylon.dto.UpdateStatusDTO
 import utn.frba.iasc.babylon.model.Auction
+import utn.frba.iasc.babylon.model.Buyer
 
 class BabylonDataClient(
     private val babylonDataConnector: Connector
@@ -48,6 +49,13 @@ class BabylonDataClient(
         LOGGER.info(response.body)
 
         return response.deserializeAs(object : TypeReference<Auction>() {})
+    }
+
+    fun buyers(tags: String?): List<Buyer> {
+        val response = babylonDataConnector.get("/babylon-data/buyers?${tags ?: ""}")
+        LOGGER.info(response.body)
+
+        return response.deserializeAs(object : TypeReference<List<Buyer>>() {})
     }
 
     companion object {

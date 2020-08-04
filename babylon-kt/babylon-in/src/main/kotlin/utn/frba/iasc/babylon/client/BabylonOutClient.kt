@@ -7,8 +7,8 @@ import utn.frba.iasc.babylon.dto.CloseAuctionDTO
 class BabylonOutClient(
     private val babylonOutConnector: Connector
 ) {
-    fun scheduleClose(auctionId: String, timeout: Int) {
-        val response = babylonOutConnector.post("/babylon-out/close-callback", CloseAuctionDTO(auctionId, timeout))
+    fun newAuctionCallback(auctionId: String, timeout: Int, tags: List<String>) {
+        val response = babylonOutConnector.post("/babylon-out/callback", CloseAuctionDTO(auctionId, timeout, tags))
         LOGGER.info(response.body)
     }
 

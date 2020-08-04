@@ -10,6 +10,7 @@ import utn.frba.iasc.babylon.dto.CreateBuyerDTO
 import utn.frba.iasc.babylon.dto.PlaceBidDTO
 import utn.frba.iasc.babylon.dto.UpdateStatusDTO
 import utn.frba.iasc.babylon.model.Auction
+import utn.frba.iasc.babylon.model.Buyer
 import utn.frba.iasc.babylon.service.DataService
 
 class DataController(
@@ -47,6 +48,12 @@ class DataController(
             this::find,
             objectMapper::writeValueAsString
         )
+        Spark.get(
+            "/babylon-storage/buyers",
+            "application/json",
+            this::buyers,
+            objectMapper::writeValueAsString
+        )
     }
 
     private fun createAuction(req: Request, res: Response) {
@@ -73,4 +80,6 @@ class DataController(
         val id = req.params(":id")
         return dataService.find(id)
     }
+
+    private fun buyers(req: Request, res: Response): List<Buyer> = dataService.buyersInterestedIn(req.queryParams("tags"))
 }
