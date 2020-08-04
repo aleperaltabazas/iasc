@@ -6,7 +6,7 @@ import java.util.*
 object IdGen {
     private val sdf = SimpleDateFormat("yyyyMMddHHmm")
 
-    fun user(): String = randomId("U")
+    fun buyer(): String = randomId("U")
 
     fun auction(): String = randomId("A")
 

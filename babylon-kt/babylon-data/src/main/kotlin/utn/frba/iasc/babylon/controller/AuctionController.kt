@@ -18,9 +18,9 @@ class AuctionController(
         Spark.put("/babylon-data/auctions/:id/bids", "application/json", this::placeBid, objectMapper::writeValueAsString)
     }
 
-    private fun createAuction(req: Request, res: Response) {
+    private fun createAuction(req: Request, res: Response): String {
         val createAuction: CreateAuctionDTO = objectMapper.readValue(req.body())
-        auctionService.create(createAuction)
+        return auctionService.create(createAuction)
     }
 
     private fun placeBid(req: Request, res: Response) {
