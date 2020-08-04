@@ -14,10 +14,13 @@ class BuyerController(
 ) : Controller {
     override fun register() {
         Spark.post("/babylon-data/buyers", "application/json", this::createBuyer, objectMapper::writeValueAsString)
+        Spark.get("/babylon-data/buyers", "application/json", this::listBuyers, objectMapper::writeValueAsString)
     }
 
     private fun createBuyer(req: Request, res: Response) {
         val createBuyer: CreateBuyerDTO = objectMapper.readValue(req.body())
         buyerService.createBuyer(createBuyer)
     }
+
+    private fun listBuyers(req: Request, res: Response) = buyerService.listBuyers()
 }

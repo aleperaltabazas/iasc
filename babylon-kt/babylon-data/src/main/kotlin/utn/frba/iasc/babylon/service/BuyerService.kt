@@ -18,4 +18,6 @@ class BuyerService(
 
         buyerStorage.add(buyer)
     }
+
+    fun listBuyers(): List<Buyer> = buyerStorage.findAll()
 }

@@ -7,6 +7,7 @@ import spark.Response
 import spark.Spark
 import utn.frba.iasc.babylon.dto.CreateAuctionDTO
 import utn.frba.iasc.babylon.dto.PlaceBidDTO
+import utn.frba.iasc.babylon.model.Auction
 import utn.frba.iasc.babylon.service.AuctionService
 
 class AuctionController(
@@ -16,6 +17,7 @@ class AuctionController(
     override fun register() {
         Spark.post("/babylon-data/auctions", "application/json", this::createAuction, objectMapper::writeValueAsString)
         Spark.put("/babylon-data/auctions/:id/bids", "application/json", this::placeBid, objectMapper::writeValueAsString)
+        Spark.get("/babylon-data/auctions", "application/json", this::listAuctions, objectMapper::writeValueAsString)
     }
 
     private fun createAuction(req: Request, res: Response) {
@@ -27,4 +29,6 @@ class AuctionController(
         val placeBid: PlaceBidDTO = objectMapper.readValue(req.body())
         auctionService.placeBid(placeBid, req.params(":id"))
     }
+
+    private fun listAuctions(req: Request, res: Response): List<Auction> = auctionService.listAuctions()
 }

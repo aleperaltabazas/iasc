@@ -11,6 +11,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler
 import org.slf4j.LoggerFactory
 import spark.servlet.SparkApplication
 import spark.servlet.SparkFilter
+import utn.frba.iasc.babylon.client.BabylonDataClient
 import utn.frba.iasc.babylon.client.BabylonStorageClient
 import utn.frba.iasc.babylon.config.ControllerModule
 import utn.frba.iasc.babylon.config.ObjectMapperModule
@@ -19,12 +20,16 @@ import utn.frba.iasc.babylon.config.StorageModule
 import utn.frba.iasc.babylon.connector.Connector
 import utn.frba.iasc.babylon.controller.Controller
 import utn.frba.iasc.babylon.extension.drop
+import utn.frba.iasc.babylon.storage.AuctionStorage
+import utn.frba.iasc.babylon.storage.BuyerStorage
 import utn.frba.iasc.babylon.util.LoggingFilter
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
     BabylonData().run(args)
 }
+
+var port: Int = 0
 
 class BabylonData {
     companion object {
@@ -34,7 +39,7 @@ class BabylonData {
 
     fun run(args: Array<String>) {
         LOGGER.info("Args passed: ${args.joinToString(", ")}")
-        val port = parsePort(args) ?: 9290
+        port = parsePort(args) ?: 9290
         LOGGER.info("Using port $port.")
 
         val handler = ServletContextHandler()
@@ -75,12 +80,26 @@ class BabylonData {
 
             val objectMapper = injector.getInstance(Key.get(ObjectMapper::class.java, Names.named("objectMapper")))
 
+            val auctionStorage = injector.getInstance(Key.get(AuctionStorage::class.java, Names.named("auctionStorage")))
+            val buyerStorage = injector.getInstance(Key.get(BuyerStorage::class.java, Names.named("buyerStorage")))
+
             val config = ConfigFactory.load()
             val storageConfig = config.getConfig("storage")
             storageConfig.getStringList("nodes").forEach {
                 val storageConnector = Connector.create(objectMapper, it)
                 val storageClient = BabylonStorageClient(storageConnector)
-                storageClient.registerSelf(config.getString("host"))
+                val host = "http://localhost:$port"
+                val neighbours = storageClient.registerSelf(host)
+
+                neighbours.hosts.forEach { neighbour ->
+                    val dataConnector = Connector.create(objectMapper, neighbour)
+                    val dataClient = BabylonDataClient(dataConnector)
+                    val auctions = dataClient.askAuctions()
+                    val buyers = dataClient.askBuyers()
+
+                    auctionStorage.merge(auctions)
+                    buyerStorage.merge(buyers)
+                }
             }
 
             injector.allBindings.keys

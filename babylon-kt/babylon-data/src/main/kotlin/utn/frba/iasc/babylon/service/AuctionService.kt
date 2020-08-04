@@ -39,4 +39,6 @@ class AuctionService(
 
         auctionStorage.update(auction.placeBid(bid))
     }
+
+    fun listAuctions(): List<Auction> = auctionStorage.findAll()
 }

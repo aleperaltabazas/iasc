@@ -21,4 +21,8 @@ abstract class Storage<T : Entity>(
     fun findAll(): List<T> = ts
 
     fun findAll(f: (T) -> Boolean): List<T> = ts.filter(f)
+
+    fun merge(ts: List<T>) {
+        this.ts += ts.filterNot { this.ts.contains(it) }
+    }
 }
