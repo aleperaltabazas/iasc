@@ -14,11 +14,9 @@ class AuctionService(
     private val auctionStorage: AuctionStorage,
     private val buyerStorage: BuyerStorage
 ) {
-    fun create(createAuction: CreateAuctionDTO): String {
-        val id = IdGen.auction()
-
+    fun create(createAuction: CreateAuctionDTO) {
         val auction = Auction(
-            id = id,
+            id = createAuction.auctionId,
             article = createAuction.article,
             status = Open,
             basePrice = createAuction.basePrice,
@@ -27,8 +25,6 @@ class AuctionService(
         )
 
         auctionStorage.add(auction)
-
-        return id
     }
 
     fun placeBid(placeBid: PlaceBidDTO, auctionId: String) {

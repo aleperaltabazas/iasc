@@ -7,6 +7,9 @@ import org.eclipse.jetty.servlet.ServletContextHandler
 import org.slf4j.LoggerFactory
 import spark.servlet.SparkApplication
 import spark.servlet.SparkFilter
+import utn.frba.iasc.babylon.config.ControllerModule
+import utn.frba.iasc.babylon.config.ObjectMapperModule
+import utn.frba.iasc.babylon.config.ServiceModule
 import utn.frba.iasc.babylon.controller.Controller
 import utn.frba.iasc.babylon.extension.drop
 import utn.frba.iasc.babylon.util.LoggingFilter
@@ -59,7 +62,9 @@ class BabylonStorage {
     class App : SparkApplication {
         override fun init() {
             val injector = Guice.createInjector(
-
+                ControllerModule,
+                ObjectMapperModule,
+                ServiceModule
             )
 
             injector.allBindings.keys
