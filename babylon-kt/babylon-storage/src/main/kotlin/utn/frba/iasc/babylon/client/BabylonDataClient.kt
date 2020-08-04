@@ -18,7 +18,9 @@ class BabylonDataClient(
         LOGGER.info(response.body)
     }
 
-    companion object{
+    fun host(): String = babylonDataConnector.host
+
+    companion object {
         private val LOGGER = LoggerFactory.getLogger(BabylonDataClient::class.java)
     }
 }

@@ -15,7 +15,7 @@ import java.io.InputStreamReader
 open class Connector(
     private val apacheClient: HttpClient,
     private val objectMapper: ObjectMapper,
-    private val host: String
+    val host: String
 ) {
     open fun get(path: String): Response = execute(path, HttpMethod.GET, null)
 
@@ -89,5 +89,14 @@ open class Connector(
                     .build()
             )
         }
+
+        fun create(
+            objectMapper: ObjectMapper,
+            host: String
+        ) = Connector(
+            objectMapper = objectMapper,
+            host = host,
+            apacheClient = HttpClientBuilder.create().build()
+        )
     }
 }

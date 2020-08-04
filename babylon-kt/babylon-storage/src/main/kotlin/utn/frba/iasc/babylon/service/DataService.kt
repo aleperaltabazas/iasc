@@ -14,4 +14,8 @@ class DataService {
     fun placeBid(placeBid: PlaceBidDTO, auctionId: String) {
         babylonDataClients.forEach { it.placeBid(placeBid, auctionId) }
     }
+
+    fun register(babylonDataClient: BabylonDataClient) {
+        babylonDataClients.add(babylonDataClient)
+    }
 }
