@@ -37,7 +37,7 @@ class BabylonDataClient(
     }
 
     fun updateStatus(update: UpdateStatusDTO, id: String) {
-        val response = babylonDataConnector.post("/babylon-data/auctions/$id/bids", update)
+        val response = babylonDataConnector.patch("/babylon-data/auctions/$id/status", update)
         LOGGER.info(response.body)
     }
 

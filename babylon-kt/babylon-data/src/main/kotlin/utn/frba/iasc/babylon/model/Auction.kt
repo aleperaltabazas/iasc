@@ -1,8 +1,7 @@
 package utn.frba.iasc.babylon.model
 
-import utn.frba.iasc.babylon.dto.CancelledDTO
-import utn.frba.iasc.babylon.dto.ClosedWithWinnerDTO
-import utn.frba.iasc.babylon.dto.UpdateStatusDTO
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import java.time.LocalDateTime
 
 data class Auction(
@@ -23,13 +22,23 @@ data class Auction(
     fun cancelled(date: LocalDateTime): Auction = copy(status = status.cancel(date))
 }
 
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    property = "type",
+    visible = true
+)
+@JsonSubTypes(
+    JsonSubTypes.Type(value = Cancelled::class, name = "CANCELLED"),
+    JsonSubTypes.Type(value = ClosedWithWinner::class, name = "CLOSED_WITH_WINNER"),
+    JsonSubTypes.Type(value = ClosedUnresolved::class, name = "CLOSED_UNRESOLVED"),
+    JsonSubTypes.Type(value = Open::class, name = "OPEN")
+)
 sealed class AuctionStatus(val status: String) {
     fun canBid(): Boolean = this == Open
 
     abstract fun closed(date: LocalDateTime, bids: List<Bid>, basePrice: Int): AuctionStatus
 
     abstract fun cancel(date: LocalDateTime): AuctionStatus
-
 }
 
 object Open : AuctionStatus("OPEN") {
