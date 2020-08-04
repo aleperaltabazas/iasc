@@ -1,16 +1,22 @@
 package utn.frba.iasc.babylon
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.inject.Guice
+import com.google.inject.Key
+import com.google.inject.name.Names
+import com.typesafe.config.ConfigFactory
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.FilterHolder
 import org.eclipse.jetty.servlet.ServletContextHandler
 import org.slf4j.LoggerFactory
 import spark.servlet.SparkApplication
 import spark.servlet.SparkFilter
+import utn.frba.iasc.babylon.client.BabylonStorageClient
 import utn.frba.iasc.babylon.config.ControllerModule
 import utn.frba.iasc.babylon.config.ObjectMapperModule
 import utn.frba.iasc.babylon.config.ServiceModule
 import utn.frba.iasc.babylon.config.StorageModule
+import utn.frba.iasc.babylon.connector.Connector
 import utn.frba.iasc.babylon.controller.Controller
 import utn.frba.iasc.babylon.extension.drop
 import utn.frba.iasc.babylon.util.LoggingFilter
@@ -66,6 +72,16 @@ class BabylonData {
                 ServiceModule,
                 StorageModule
             )
+
+            val objectMapper = injector.getInstance(Key.get(ObjectMapper::class.java, Names.named("objectMapper")))
+
+            val config = ConfigFactory.load()
+            val storageConfig = config.getConfig("storage")
+            storageConfig.getStringList("nodes").forEach {
+                val storageConnector = Connector.create(objectMapper, it)
+                val storageClient = BabylonStorageClient(storageConnector)
+                storageClient.registerSelf(config.getString("host"))
+            }
 
             injector.allBindings.keys
                 .filter { Controller::class.java.isAssignableFrom(it.typeLiteral.rawType) }
