@@ -3,9 +3,9 @@ package utn.frba.iasc.utils
 import java.text.SimpleDateFormat
 import java.util.{Date, UUID}
 
-object IdGen {
-  private val sdf = new SimpleDateFormat("yyyyMMddHHmm")
-
+class IdGen(
+  private val sdf: SimpleDateFormat
+) {
   def user: String = randomId("U")
 
   def auction: String = randomId("A")

@@ -1,66 +1,77 @@
 package utn.frba.iasc
 
-import akka.actor.{Actor, ActorSystem, Props}
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.server.Directives.{complete, path, post, _}
+import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
+import com.google.inject.name.Names
+import com.google.inject.{Guice, Key}
+import utn.frba.iasc.controller.Controller
+import utn.frba.iasc.injection._
 import com.typesafe.config.ConfigFactory
-import org.slf4j.LoggerFactory
-import utn.frba.iasc.dto.{BabylonCodec, CreateAuctionDTO}
-import utn.frba.iasc.utils.IdGen
-import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
+import akka.actor.ActorSystem
+import akka.http.scaladsl.Http
+import utn.frba.iasc.actors.{RouterActor, UsersActor}
 
+import scala.concurrent.ExecutionContextExecutor
 import scala.io.StdIn
+import scala.jdk.CollectionConverters._
 
-class Babylon
+object Babylon {
+  def main(args: Array[String]) {
+    val injector = Guice.createInjector(
+      ActorsModule,
+      ContextModule,
+      ControllerModule,
+      RepositoryModule,
+      ServiceModule,
+      UtilsModule,
+    )
 
-class UnActor extends Actor  {
-  override def receive: Receive = {
-    case s: String => println(s)
-  }
-}
+    implicit val executionContext: ExecutionContextExecutor = injector
+      .getInstance(Key.get(classOf[ExecutionContextExecutor], Names.named("executionContext")))
 
-object Babylon extends BabylonCodec {
-  private val LOGGER = LoggerFactory.getLogger(classOf[Babylon])
-
-  def main(args: Array[String]): Unit = {
     val ports = Seq("2551", "2552", "0")
-
+    // In a production application you wouldn't typically start multiple ActorSystem instances in the
+    // same JVM, here we do it to easily demonstrate these ActorSytems (which would be in separate JVM's)
+    // talking to each other.
     ports foreach { port =>
-      val config = ConfigFactory.parseString(
-        "akka.remote.artery.canonical.port=" + port + "\nakka.cluster.jmx.multi-mbeans-in-same-jvm = on"
-      ).
+      // Override the configuration of the port
+      val config = ConfigFactory.parseString("akka.remote.artery.canonical.port=" + port + "\nakka.cluster.jmx.multi-mbeans-in-same-jvm = on").
         withFallback(ConfigFactory.load())
 
-      implicit val system = ActorSystem("ShardingSystem", config)
-      implicit val materializer = ActorMaterializer()
-      implicit val executionContext = system.dispatcher
-
-      val unActor = system.actorOf(Props[UnActor])
-
-      val routes = concat(
-        (path("auctions") & post) {
-          entity(as[CreateAuctionDTO]) { auction: CreateAuctionDTO =>
-            LOGGER.info("Create new auction")
-            val id = IdGen.auction
-            unActor ! id
-            complete(StatusCodes.OK)
-          }
-        }, {
-          (path("hello") & get) {
-            LOGGER.info("Hello")
-            complete(StatusCodes.OK)
-          }
-        }
-      )
-
-      val bindingFuture = Http().bindAndHandle(routes, "localhost", 8080)
-      println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
-      StdIn.readLine()
-      bindingFuture
-        .flatMap(_.unbind())
-        .onComplete(_ => system.terminate())
+      val usersActor: ActorRef = injector
+        .getInstance(Key.get(classOf[ActorRef], Names.named("usersActorRef")))
+      val auctionActor: ActorRef = injector
+        .getInstance(Key.get(classOf[ActorRef], Names.named("auctionActorRef")))
+      // Create an Akka system
+      val system = ActorSystem("ShardingSystem", config)
+      // Create an actor that starts the sharding and sends random messages
+      system.actorOf(Props(
+        new RouterActor(
+          system = system,
+          executionContext = executionContext,
+          usersActor = usersActor,
+          auctionActor = auctionActor
+        )
+      ))
     }
+
+
+    implicit val system: ActorSystem = injector
+      .getInstance(Key.get(classOf[ActorSystem], Names.named("actorSystem")))
+    implicit val materializer: ActorMaterializer = injector
+      .getInstance(Key.get(classOf[ActorMaterializer], Names.named("materializer")))
+
+    val routes = injector.getAllBindings.asScala.keys
+      .filter { it => classOf[Controller].isAssignableFrom(it.getTypeLiteral.getRawType) }
+      .map(it => injector.getInstance(it).asInstanceOf[Controller].routes)
+      .reduceLeft { (acc, e) => acc ~ e }
+
+    val bindingFuture = Http().bindAndHandle(routes, "localhost", 8080)
+    println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
+    StdIn.readLine()
+    bindingFuture
+      .flatMap(_.unbind())
+      .onComplete(_ => system.terminate())
   }
 }

@@ -45,11 +45,3 @@ trait AuctionFindCodec {
   implicit val closedEncoder: Encoder[ClosedDTO] = deriveEncoder[ClosedDTO]
   implicit val closedDecoder: Decoder[ClosedDTO] = deriveDecoder[ClosedDTO]
 }
-
-trait BabylonCodec extends BuyerCodec
-  with CreateAuctionCodec
-  with PlaceBidCodec
-  with AuctionCreatedCodec
-  with BidPlacedCodec
-  with UserCodec
-  with AuctionFindCodec
