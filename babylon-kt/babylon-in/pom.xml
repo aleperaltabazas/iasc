@@ -10,7 +10,7 @@
 
     <properties>
         <kotlin.version>1.3.61</kotlin.version>
-        <jackson.version>2.10.1</jackson.version>
+        <jackson.version>2.12.1</jackson.version>
         <newrelic.version>4.3.0</newrelic.version>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
